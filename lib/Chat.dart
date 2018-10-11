@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'const.dart';
 
 class Chat extends StatelessWidget {
@@ -27,14 +29,16 @@ class Chat extends StatelessWidget {
 
 class ChatScreen extends StatefulWidget {
 
-  final currentUser = FirebaseAuth.instance.currentUser();
+
   @override
   State createState() =>
       new ChatScreenState();
 }
 
+
 class ChatScreenState extends State<ChatScreen> {
 
+  static FirebaseUser currentUser;
   var listMessage;
   String groupChatId;
   SharedPreferences prefs;
@@ -82,7 +86,9 @@ class ChatScreenState extends State<ChatScreen> {
 //
 //    setState(() {});
   }
-
+  void getCurrentUser() async {
+    currentUser= await FirebaseAuth.instance.currentUser();
+  }
   Future getImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
@@ -139,8 +145,7 @@ class ChatScreenState extends State<ChatScreen> {
         await transaction.set(
           documentReference,
           {
-            'idFrom': id,
-            'idTo': peerId,
+            'idFrom': currentUser.uid,
             'timestamp': DateTime
                 .now()
                 .millisecondsSinceEpoch
@@ -153,12 +158,22 @@ class ChatScreenState extends State<ChatScreen> {
       listScrollController.animateTo(
           0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
-      Fluttertoast.showToast(msg: 'Nothing to send');
+      debugPrint('Nothing to send');
     }
   }
 
+  Future<String> getPhotoByUid(String uid) async {
+
+    var data= await Firestore.instance.collection("users").where('id',isEqualTo: uid).getDocuments();
+    var documents=data.documents;
+    if(documents.length==0)
+      return "";
+    else
+    return documents[0]['photoUrl'];
+  }
+
   Widget buildItem(int index, DocumentSnapshot document) {
-    if (document['idFrom'] == id) {
+    if (document['idFrom'] == currentUser.uid) {
       // Right (my message)
       return Row(
         children: <Widget>[
@@ -249,7 +264,7 @@ class ChatScreenState extends State<ChatScreen> {
                       height: 35.0,
                       padding: EdgeInsets.all(10.0),
                     ),
-                    imageUrl: peerAvatar,
+                    imageUrl: getPhotoByUid(document['idFrom']).toString(),
                     width: 35.0,
                     height: 35.0,
                     fit: BoxFit.cover,

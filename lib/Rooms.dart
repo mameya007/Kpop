@@ -18,7 +18,7 @@ class RoomsState extends State<Rooms> {
   Future<Null> _rooms=Firestore.instance.collection('rooms').getDocuments().then((snap){
     size=snap.documents.length;
   });
-//  final Future<QuerySnapshot> documents =Firestore.instance.collection('rooms').getDocuments();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

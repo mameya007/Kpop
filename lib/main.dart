@@ -137,7 +137,8 @@ class LoginScreenState extends State<LoginScreen> {
       this.setState(() {
         isLoading = false;
       });
-
+      final QuerySnapshot docs=await Firestore.instance.collection("rooms").getDocuments();
+      List<DocumentSnapshot> _rooms=docs.documents;
       Navigator.push(
           context,
           MaterialPageRoute(
