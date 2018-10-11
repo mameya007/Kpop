@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,15 +71,15 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   readLocal() async {
-    prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('id') ?? '';
-    if (id.hashCode <= peerId.hashCode) {
-      groupChatId = '$id-$peerId';
-    } else {
-      groupChatId = '$peerId-$id';
-    }
-
-    setState(() {});
+//    prefs = await SharedPreferences.getInstance();
+//    id = prefs.getString('id') ?? '';
+//    if (id.hashCode <= peerId.hashCode) {
+//      groupChatId = '$id-$peerId';
+//    } else {
+//      groupChatId = '$peerId-$id';
+//    }
+//
+//    setState(() {});
   }
 
   Future getImage() async {
