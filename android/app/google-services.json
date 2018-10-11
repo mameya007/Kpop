@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "360898667162",
+    "firebase_url": "https://kpop-18b02.firebaseio.com",
+    "project_id": "kpop-18b02",
+    "storage_bucket": "kpop-18b02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360898667162:android:58e0a2407e0d172c",
+        "android_client_info": {
+          "package_name": "com.troliste.kpop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "360898667162-8nr8412lmko3pnpdnsv4sl8r31v37fag.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.troliste.kpop",
+            "certificate_hash": "2bb1d8eebb4f0cf793d818b0f7ca7dbbf1150f48"
+          }
+        },
+        {
+          "client_id": "360898667162-q8m3fnu0qs48l76indpa0rbrsqrskdie.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp0_5mspLf2vjJj1O8F-qAvKj4J_gHeyY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "360898667162-q8m3fnu0qs48l76indpa0rbrsqrskdie.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
