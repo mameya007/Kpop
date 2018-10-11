@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'const.dart';
 class Rooms extends StatefulWidget {
@@ -171,7 +172,6 @@ class RoomsState extends State<Rooms> {
           ],
         ),
           onPressed: () {
-          debugPrint("Pressed");
             Navigator.push(
                 context,
                 new MaterialPageRoute(

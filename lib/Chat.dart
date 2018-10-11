@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'const.dart';
+import 'main.dart';
 import 'package:intl/intl.dart';
 
 class Chat extends StatelessWidget {
@@ -33,7 +34,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  static FirebaseUser currentUser;
+  FirebaseUser currentUser=LoginScreenState.currentUser;
   var listMessage;
   String groupChatId;
   SharedPreferences prefs;
@@ -52,7 +53,7 @@ class ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     focusNode.addListener(onFocusChange);
-
+    debugPrint(currentUser.uid);
     groupChatId = '';
 
     isLoading = false;
@@ -616,15 +617,15 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildListMessage() {
     return Flexible(
-      child: groupChatId == ''
+      child: groupChatId == 'Messages'
           ? Center(
               child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(themeColor)))
           : StreamBuilder(
               stream: Firestore.instance
-                  .collection('messages')
-                  .document(groupChatId)
-                  .collection(groupChatId)
+                  .collection('rooms')
+                  .document('BTS')
+                  .collection('Messages')
                   .orderBy('timestamp', descending: true)
                   .limit(20)
                   .snapshots(),

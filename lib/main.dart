@@ -38,7 +38,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   bool isLoading = false;
   bool isLoggedIn = false;
-  FirebaseUser currentUser;
+  static FirebaseUser currentUser;
 
   @override
   void initState() {
@@ -133,6 +133,7 @@ class LoginScreenState extends State<LoginScreen> {
         await prefs.setString('photoUrl', documents[0]['photoUrl']);
         await prefs.setString('aboutMe', documents[0]['aboutMe']);
       }
+      currentUser=firebaseUser;
 //      Fluttertoast.showToast(msg: "Sign in success");
       this.setState(() {
         isLoading = false;
