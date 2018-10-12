@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Chat.dart';
 import 'main.dart';
 import 'const.dart';
+import 'settings.dart';
 
 class Rooms extends StatefulWidget {
   @override
@@ -291,7 +292,7 @@ class RoomsState extends State<Rooms> {
     if (choice.title == 'Log out') {
       handleSignOut();
     } else {
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
     }
   }
 
