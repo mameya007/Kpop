@@ -43,7 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    isSignedIn();
+//    isSignedIn();
   }
 
   static FirebaseUser get User {
@@ -56,7 +56,7 @@ class LoginScreenState extends State<LoginScreen> {
     });
 
     prefs = await SharedPreferences.getInstance();
-    isLoggedIn = await facebookSignIn.isLoggedIn;
+    isLoggedIn=prefs.getBool("isLoggedIn");
     if (isLoggedIn) {
       Navigator.push(
         context,
@@ -125,12 +125,12 @@ class LoginScreenState extends State<LoginScreen> {
         await prefs.setString('id', currentUser.uid);
         await prefs.setString('nickname', currentUser.displayName);
         await prefs.setString('photoUrl', currentUser.photoUrl);
+        await prefs.setBool("isLoggedIn", true);
       } else {
         // Write data to local
         await prefs.setString('id', documents[0]['id']);
         await prefs.setString('nickname', documents[0]['nickname']);
         await prefs.setString('photoUrl', documents[0]['photoUrl']);
-        await prefs.setString('aboutMe', documents[0]['aboutMe']);
       }
 //      debugPrint(currentUser.displayName);
 //      Fluttertoast.showToast(msg: "Sign in success");

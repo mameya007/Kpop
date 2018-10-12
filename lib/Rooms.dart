@@ -8,6 +8,7 @@ import 'Chat.dart';
 import 'main.dart';
 import 'const.dart';
 import 'settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Rooms extends StatefulWidget {
   @override
@@ -297,11 +298,14 @@ class RoomsState extends State<Rooms> {
   }
 
   Future<Null> handleSignOut() async {
+
     this.setState(() {
       isLoading = true;
     });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     LoginScreenState.facebookSignIn.logOut();
     await FirebaseAuth.instance.signOut();
+    await prefs.setBool("isLoggedIn", false);
     this.setState(() {
       isLoading = false;
     });
