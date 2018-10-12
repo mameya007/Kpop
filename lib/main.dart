@@ -39,7 +39,7 @@ class LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   bool isLoggedIn = false;
   static FirebaseUser currentUser;
-
+  // TODO : Flutter Toasts Msgs
   @override
   void initState() {
     super.initState();
