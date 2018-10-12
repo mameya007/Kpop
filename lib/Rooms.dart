@@ -1,24 +1,124 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Chat.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'const.dart';
+
 class Rooms extends StatefulWidget {
   @override
   State createState() => new RoomsState();
 }
 
-
-
 class RoomsState extends State<Rooms> {
   bool isLoading = false;
-  static int size=0;
-  Future<Null> _rooms=Firestore.instance.collection('rooms').getDocuments().then((snap){
-    size=snap.documents.length;
+  static int size = 0;
+  Future<Null> _rooms =
+      Firestore.instance.collection('rooms').getDocuments().then((snap) {
+    size = snap.documents.length;
   });
+  List<Choice> choices = const <Choice>[
+    const Choice(title: 'Settings', icon: Icons.settings),
+    const Choice(title: 'Log out', icon: Icons.exit_to_app),
+  ];
+
+  Future<bool> onBackPress() {
+    openDialog();
+    return Future.value(false);
+  }
+
+  Future<Null> openDialog() async {
+    switch (await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            contentPadding:
+                EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
+            children: <Widget>[
+              Container(
+                color: themeColor,
+                margin: EdgeInsets.all(0.0),
+                padding: EdgeInsets.only(bottom: 10.0, top: 10.0),
+                height: 100.0,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      child: Icon(
+                        Icons.exit_to_app,
+                        size: 30.0,
+                        color: Colors.white,
+                      ),
+                      margin: EdgeInsets.only(bottom: 10.0),
+                    ),
+                    Text(
+                      'Exit app',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Are you sure to exit app?',
+                      style: TextStyle(color: Colors.white70, fontSize: 14.0),
+                    ),
+                  ],
+                ),
+              ),
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, 0);
+                },
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      child: Icon(
+                        Icons.cancel,
+                        color: primaryColor,
+                      ),
+                      margin: EdgeInsets.only(right: 10.0),
+                    ),
+                    Text(
+                      'CANCEL',
+                      style: TextStyle(
+                          color: primaryColor, fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+              ),
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, 1);
+                },
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      child: Icon(
+                        Icons.check_circle,
+                        color: primaryColor,
+                      ),
+                      margin: EdgeInsets.only(right: 10.0),
+                    ),
+                    Text(
+                      'YES',
+                      style: TextStyle(
+                          color: primaryColor, fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          );
+        })) {
+      case 0:
+        break;
+      case 1:
+        exit(0);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +130,30 @@ class RoomsState extends State<Rooms> {
         ),
         centerTitle: true,
         actions: <Widget>[
-//          PopupMenuButton<Choice>(
-//            onSelected: onItemMenuPress,
-//            itemBuilder: (BuildContext context) {
-//              return choices.map((Choice choice) {
-//                return PopupMenuItem<Choice>(
-//                    value: choice,
-//                    child: Row(
-//                      children: <Widget>[
-//                        Icon(
-//                          choice.icon,
-//                          color: primaryColor,
-//                        ),
-//                        Container(
-//                          width: 10.0,
-//                        ),
-//                        Text(
-//                          choice.title,
-//                          style: TextStyle(color: primaryColor),
-//                        ),
-//                      ],
-//                    ));
-//              }).toList();
-//            },
-//          ),
+          PopupMenuButton<Choice>(
+            onSelected: onItemMenuPress,
+            itemBuilder: (BuildContext context) {
+              return choices.map((Choice choice) {
+                return PopupMenuItem<Choice>(
+                    value: choice,
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          choice.icon,
+                          color: primaryColor,
+                        ),
+                        Container(
+                          width: 10.0,
+                        ),
+                        Text(
+                          choice.title,
+                          style: TextStyle(color: primaryColor),
+                        ),
+                      ],
+                    ));
+              }).toList();
+            },
+          ),
         ],
       ),
       body: WillPopScope(
@@ -67,7 +167,10 @@ class RoomsState extends State<Rooms> {
 //                  itemCount: size,
 //        ),),
               child: StreamBuilder(
-                stream: Firestore.instance.collection('rooms').getDocuments().asStream(),
+                stream: Firestore.instance
+                    .collection('rooms')
+                    .getDocuments()
+                    .asStream(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
@@ -78,7 +181,8 @@ class RoomsState extends State<Rooms> {
                   } else {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data.documents[index]),
+                      itemBuilder: (context, index) =>
+                          buildItem(context, snapshot.data.documents[index]),
                       itemCount: snapshot.data.documents.length,
                     );
                   }
@@ -90,22 +194,23 @@ class RoomsState extends State<Rooms> {
             Positioned(
               child: isLoading
                   ? Container(
-                child: Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(themeColor)),
-                ),
-                color: Colors.white.withOpacity(0.8),
-              )
+                      child: Center(
+                        child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(themeColor)),
+                      ),
+                      color: Colors.white.withOpacity(0.8),
+                    )
                   : Container(),
             )
           ],
         ),
-        onWillPop: BackToMenu,
+        onWillPop: onBackPress,
       ),
     );
   }
 
-  Future<bool> BackToMenu()
-  {
+  Future<bool> BackToMenu() {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -113,15 +218,13 @@ class RoomsState extends State<Rooms> {
         ));
   }
 
-
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
-
-    debugPrint(''''
-    Nom : ${document.documentID}
-    Data : ${document.reference.collection('Messages')}
-    Length : ${document.data.length}
-    '''''
-    );
+//    debugPrint(''''
+//    Nom : ${document.documentID}
+//    Data : ${document.reference.collection('Messages')}
+//    Length : ${document.data.length}
+//    '''''
+//    );
     return Container(
       child: FlatButton(
         child: Row(
@@ -171,12 +274,10 @@ class RoomsState extends State<Rooms> {
             ),
           ],
         ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) => new Chat()));
-          },
+        onPressed: () {
+          Navigator.push(
+              context, new MaterialPageRoute(builder: (context) => new Chat()));
+        },
         color: greyColor2,
         padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
         shape:
@@ -185,4 +286,31 @@ class RoomsState extends State<Rooms> {
       margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
     );
   }
+
+  void onItemMenuPress(Choice choice) {
+    if (choice.title == 'Log out') {
+      handleSignOut();
+    } else {
+//      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+    }
+  }
+
+  Future<Null> handleSignOut() async {
+    this.setState(() {
+      isLoading = true;
+    });
+    LoginScreenState.facebookSignIn.logOut();
+    await FirebaseAuth.instance.signOut();
+    this.setState(() {
+      isLoading = false;
+    });
+    Navigator.pop(context, 1);
+  }
+}
+
+class Choice {
+  const Choice({this.title, this.icon});
+
+  final String title;
+  final IconData icon;
 }

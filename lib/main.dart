@@ -35,7 +35,7 @@ class LoginScreenState extends State<LoginScreen> {
   static final FacebookLogin facebookSignIn = new FacebookLogin();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SharedPreferences prefs;
-
+  final bool firstOpen = true;
   bool isLoading = false;
   bool isLoggedIn = false;
   static FirebaseUser currentUser;
@@ -46,22 +46,23 @@ class LoginScreenState extends State<LoginScreen> {
     isSignedIn();
   }
 
+  static FirebaseUser get User {
+    return currentUser;
+  }
+
   void isSignedIn() async {
     this.setState(() {
       isLoading = true;
     });
 
     prefs = await SharedPreferences.getInstance();
-
-//    isLoggedIn = await googleSignIn.isSignedIn();
-//    if (isLoggedIn) {
-//      Navigator.push(
-//        context,
-//        MaterialPageRoute(
-//            builder: (context) =>
-//                MainScreen(currentUserId: prefs.getString('id'))),
-//      );
-//    }
+    isLoggedIn = await facebookSignIn.isLoggedIn;
+    if (isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Rooms()),
+      );
+    }
 
     this.setState(() {
       isLoading = false;
@@ -76,16 +77,15 @@ class LoginScreenState extends State<LoginScreen> {
     });
     final FacebookLoginResult result = await facebookSignIn
         .logInWithReadPermissions(['email', 'public_profile']);
-    FirebaseUser firebaseUser;
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final FacebookAccessToken accessToken = result.accessToken;
-        firebaseUser = await firebaseAuth.signInWithFacebook(
+        currentUser = await firebaseAuth.signInWithFacebook(
             accessToken: result.accessToken.token);
         debugPrint('''
          Logged in!
-         Name: ${firebaseUser.displayName}
-         Email: ${firebaseUser.photoUrl}
+         Name: ${currentUser.displayName}
+         Email: ${currentUser.email}
          Token: ${accessToken.token}
          User id: ${accessToken.userId}
          Expires: ${accessToken.expires}
@@ -103,26 +103,25 @@ class LoginScreenState extends State<LoginScreen> {
     }
 
 //    FirebaseUser firebaseUser = await firebaseAuth.signInWithEmailAndPassword(email: "mameya.mseddi@gmail.com", password: "1996medmsd");
-    if (firebaseUser != null) {
+    if (currentUser != null) {
       // Check is already sign up
       final QuerySnapshot result = await Firestore.instance
           .collection('users')
-          .where('id', isEqualTo: firebaseUser.uid)
+          .where('id', isEqualTo: currentUser.uid)
           .getDocuments();
       final List<DocumentSnapshot> documents = result.documents;
       if (documents.length == 0) {
         // Update data to server if new user
         Firestore.instance
             .collection('users')
-            .document(firebaseUser.uid)
+            .document(currentUser.uid)
             .setData({
-          'nickname': firebaseUser.displayName,
-          'photoUrl': firebaseUser.photoUrl,
-          'id': firebaseUser.uid
+          'nickname': currentUser.displayName,
+          'photoUrl': currentUser.photoUrl,
+          'id': currentUser.uid
         });
 
         // Write data to local
-        currentUser = firebaseUser;
         await prefs.setString('id', currentUser.uid);
         await prefs.setString('nickname', currentUser.displayName);
         await prefs.setString('photoUrl', currentUser.photoUrl);
@@ -133,13 +132,14 @@ class LoginScreenState extends State<LoginScreen> {
         await prefs.setString('photoUrl', documents[0]['photoUrl']);
         await prefs.setString('aboutMe', documents[0]['aboutMe']);
       }
-      currentUser=firebaseUser;
+//      debugPrint(currentUser.displayName);
 //      Fluttertoast.showToast(msg: "Sign in success");
       this.setState(() {
         isLoading = false;
       });
-      final QuerySnapshot docs=await Firestore.instance.collection("rooms").getDocuments();
-      List<DocumentSnapshot> _rooms=docs.documents;
+      final QuerySnapshot docs =
+          await Firestore.instance.collection("rooms").getDocuments();
+      List<DocumentSnapshot> _rooms = docs.documents;
       Navigator.push(
           context,
           MaterialPageRoute(

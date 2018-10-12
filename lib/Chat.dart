@@ -34,7 +34,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  FirebaseUser currentUser=LoginScreenState.currentUser;
+  FirebaseUser currentUser;
   var listMessage;
   String groupChatId;
   SharedPreferences prefs;
@@ -52,15 +52,30 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    currentUser=LoginScreenState.User;
+    debugPrint('Email : ${currentUser.email}');
+//    CollectionReference reference = Firestore.instance.collection('rooms').document('BTS').collection('Messages');
+//    reference.snapshots().listen((querySnapshot) {
+//      querySnapshot.documentChanges.forEach((change) {
+//        DocumentSnapshot document=change.document;
+//        // Do something with change
+//          debugPrint(''''
+//          ID = ${document.documentID}
+//          Length = ${document.data.length}
+//          Data = ${document.data}
+//          IdFrom=${document.data['idFrom']}
+//          Values = ${document.data.values}
+//          Keys = ${document.data.keys}
+//          '''''
+//          );
+//      });
+//    });
     focusNode.addListener(onFocusChange);
-    debugPrint(currentUser.uid);
-    groupChatId = '';
 
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
 
-    readLocal();
   }
 
   void onFocusChange() {
@@ -72,29 +87,13 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  readLocal() async {
-//    prefs = await SharedPreferences.getInstance();
-//    id = prefs.getString('id') ?? '';
-//    if (id.hashCode <= peerId.hashCode) {
-//      groupChatId = '$id-$peerId';
-//    } else {
-//      groupChatId = '$peerId-$id';
-//    }
-//
-//    setState(() {});
-  }
-
-  void getCurrentUser() async {
-    currentUser = await FirebaseAuth.instance.currentUser();
-  }
-
   Future getImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
+    debugPrint('Path ${image.path}');
     if (image != null) {
       setState(() {
         imageFile = image;
-        isLoading = true;
+//        isLoading = true;
       });
     }
     uploadFile();
@@ -110,30 +109,25 @@ class ChatScreenState extends State<ChatScreen> {
 
   Future uploadFile() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(imageFile);
+    final StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+    final StorageUploadTask uploadTask = reference.putFile(imageFile);
 
-    final Uri downloadUrl = (await uploadTask.future).downloadUrl;
-    imageUrl = downloadUrl.toString();
-
-    setState(() {
-      isLoading = false;
-    });
-
+    imageUrl='https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${fileName}?alt=media';
     onSendMessage(imageUrl, 1);
+    debugPrint('Sent');
   }
 
   void onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
+    debugPrint('Content $content');
+//    debugPrint('UID ${currentUser.uid}');
     if (content.trim() != '') {
       textEditingController.clear();
-
       var documentReference = Firestore.instance
-          .collection('messages')
-          .document(groupChatId)
-          .collection(groupChatId)
-          .document(DateTime.now().millisecondsSinceEpoch.toString());
-
+          .collection('rooms')
+          .document('BTS')
+          .collection('Messages').document();
+//          .document(DateTime.now().millisecondsSinceEpoch.toString());
       Firestore.instance.runTransaction((transaction) async {
         await transaction.set(
           documentReference,
@@ -165,6 +159,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildItem(int index, DocumentSnapshot document) {
+    debugPrint(document['idFrom']);
+    debugPrint(currentUser.uid);
     if (document['idFrom'] == currentUser.uid) {
       // Right (my message)
       return Row(
@@ -617,11 +613,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildListMessage() {
     return Flexible(
-      child: groupChatId == 'Messages'
-          ? Center(
-              child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(themeColor)))
-          : StreamBuilder(
+      child: StreamBuilder(
               stream: Firestore.instance
                   .collection('rooms')
                   .document('BTS')
