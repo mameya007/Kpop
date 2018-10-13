@@ -74,10 +74,10 @@ class LoginScreenState extends State<LoginScreen> {
     this.setState(() {
       isLoading = true;
     });
+        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
         final FacebookAccessToken accessToken = await facebookSignIn.currentAccessToken;
         currentUser = await firebaseAuth.signInWithFacebook(
             accessToken:accessToken.token);
-        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
     if (currentUser != null) {
       // Check is already sign up
       final QuerySnapshot result = await Firestore.instance
@@ -139,9 +139,9 @@ class LoginScreenState extends State<LoginScreen> {
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final FacebookAccessToken accessToken = result.accessToken;
+        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
         currentUser = await firebaseAuth.signInWithFacebook(
             accessToken: result.accessToken.token);
-        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
         debugPrint('''
          Logged in!
          Name: ${currentUser.displayName}

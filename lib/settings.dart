@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'Rooms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -60,6 +60,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     nickname = prefs.getString('nickname') ?? '';
     photoUrl = prefs.getString('photoUrl') ?? '';
     controllerNickname = new TextEditingController(text: nickname);
+//    Fluttertoast.showToast(msg: "Details Ares : $id${DateTime.now().millisecondsSinceEpoch.toString()}");
     // Force refresh input
     setState(() {
     });
@@ -78,11 +79,11 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future uploadFile() async {
-    String fileName = id;
+    String fileName = "$id${DateTime.now().millisecondsSinceEpoch.toString()}";
     StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = reference.putFile(avatarImageFile);
     photoUrl =
-        "https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$id?alt=media";
+        "https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media";
     Firestore.instance.collection('users').document(id).updateData(
         {'nickname': nickname, 'photoUrl': photoUrl}).then((data) async {
       await prefs.setString('photoUrl', photoUrl);
@@ -142,24 +143,24 @@ class SettingsScreenState extends State<SettingsScreen> {
                       (avatarImageFile == null)
                           ? (photoUrl != ''
                               ? Material(
-                                    child:Image.network(photoUrl,width: 90.0,height: 90.0,fit: BoxFit.cover),
-//                                  child: CachedNetworkImage(
-//                                    placeholder: Container(
-//                                      child: CircularProgressIndicator(
-//                                        strokeWidth: 2.0,
-//                                        valueColor:
-//                                            AlwaysStoppedAnimation<Color>(
-//                                                themeColor),
-//                                      ),
-//                                      width: 90.0,
-//                                      height: 90.0,
-//                                      padding: EdgeInsets.all(20.0),
-//                                    ),
-//                                    imageUrl:photoUrl,
-//                                    width: 90.0,
-//                                    height: 90.0,
-//                                    fit: BoxFit.cover,
-//                                  ),
+//                                    child:Image.network(photoUrl,width: 90.0,height: 90.0,fit: BoxFit.cover),
+                                  child: CachedNetworkImage(
+                                    placeholder: Container(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                themeColor),
+                                      ),
+                                      width: 90.0,
+                                      height: 90.0,
+                                      padding: EdgeInsets.all(20.0),
+                                    ),
+                                    imageUrl:photoUrl,
+                                    width: 90.0,
+                                    height: 90.0,
+                                    fit: BoxFit.cover,
+                                  ),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(45.0)),
                                 )

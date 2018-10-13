@@ -23,7 +23,7 @@ class Chat extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(
-          'CHAT',
+          groupChatId,
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
