@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'const.dart';
-import 'main.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Chat extends StatelessWidget {
   final String groupChatId;
@@ -134,12 +133,18 @@ class ChatScreenState extends State<ChatScreen> {
     final StorageUploadTask uploadTask = reference.putFile(imageFile);
 
     imageUrl =
-        'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${fileName}?alt=media';
+        'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media';
     onSendMessage(imageUrl, 1);
     debugPrint('Sent');
   }
 
   void onSendMessage(String content, int type) {
+    focusNode.unfocus();
+    if (type == 2) {
+      setState(() {
+        isShowSticker = !isShowSticker;
+      });
+    }
     // type: 0 = text, 1 = image, 2 = sticker
     debugPrint("Group Chat ID : $groupChatId");
     if (content.trim() != '') {
@@ -182,8 +187,6 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildItem(int index, DocumentSnapshot document) {
-    debugPrint(document['idFrom']);
-    debugPrint(currentUser.uid);
     if (document['idFrom'] == currentUser.uid) {
       // Right (my message)
       return Row(
@@ -207,6 +210,7 @@ class ChatScreenState extends State<ChatScreen> {
               : document['type'] == 1
                   // Image
                   ? Container(
+            
                       child: Material(
                         child: CachedNetworkImage(
                           placeholder: Container(
@@ -642,7 +646,7 @@ class ChatScreenState extends State<ChatScreen> {
             .document(groupChatId)
             .collection('Messages')
             .orderBy('timestamp', descending: true)
-            .limit(20)
+            .limit(100)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

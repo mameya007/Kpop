@@ -16,6 +16,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  transparent_image: ^0.1.0
   fluttertoast: ^2.0.9
   flutter_facebook_login: ^1.1.1
   firebase_storage: ^1.0.3
@@ -60,6 +61,7 @@ flutter:
      - images/mimi8.gif
      - images/mimi9.gif
      - images/BTS.jpg
+     - images/EXO.jpg
 
 
 

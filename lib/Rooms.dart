@@ -225,24 +225,10 @@ class RoomsState extends State<Rooms> {
       child: FlatButton(
         child: Row(
           children: <Widget>[
-//            Material(
-//              child: CachedNetworkImage(
-//                placeholder: Container(
-//                  child: CircularProgressIndicator(
-//                    strokeWidth: 1.0,
-//                    valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-//                  ),
-//                  width: 50.0,
-//                  height: 50.0,
-//                  padding: EdgeInsets.all(15.0),
-//                ),
-//                imageUrl: document['photoUrl'],
-//                width: 50.0,
-//                height: 50.0,
-//                fit: BoxFit.cover,
-//              ),
-//              borderRadius: BorderRadius.all(Radius.circular(25.0)),
-//            ),
+            Material(
+              child: Image.asset("${document.documentID}.jpg",width: 50.0,height: 50.0,fit: BoxFit.cover,alignment: Alignment.center),
+              borderRadius: BorderRadius.all(Radius.elliptical(50.0,50.0)),
+            ),
             new Flexible(
               child: Container(
                 child: new Column(
