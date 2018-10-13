@@ -9,6 +9,7 @@ import 'main.dart';
 import 'const.dart';
 import 'settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Rooms extends StatefulWidget {
   @override
@@ -212,13 +213,6 @@ class RoomsState extends State<Rooms> {
     );
   }
 
-  Future<bool> BackToMenu() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyApp(),
-        ));
-  }
 
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
 //    debugPrint(''''
@@ -278,7 +272,7 @@ class RoomsState extends State<Rooms> {
         ),
         onPressed: () {
           Navigator.push(
-              context, new MaterialPageRoute(builder: (context) => new Chat()));
+              context, new MaterialPageRoute(builder: (context) => new Chat(groupChatId: document.documentID,)));
         },
         color: greyColor2,
         padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
@@ -306,6 +300,7 @@ class RoomsState extends State<Rooms> {
     LoginScreenState.facebookSignIn.logOut();
     await FirebaseAuth.instance.signOut();
     await prefs.setBool("isLoggedIn", false);
+    Fluttertoast.showToast(msg: "Disconnected",toastLength: Toast.LENGTH_SHORT);
     this.setState(() {
       isLoading = false;
     });

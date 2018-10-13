@@ -7,12 +7,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'const.dart';
 import 'main.dart';
 import 'package:intl/intl.dart';
 
 class Chat extends StatelessWidget {
+  final String groupChatId;
+
+  Chat({Key key, @required this.groupChatId}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -23,22 +28,29 @@ class Chat extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: new ChatScreen(),
+      body: new ChatScreen(
+        groupChatId: groupChatId,
+      ),
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
+  final String groupChatId;
+
+  ChatScreen({Key key, @required this.groupChatId}) : super(key: key);
+
   @override
-  State createState() => new ChatScreenState();
+  State createState() => new ChatScreenState(groupChatId: groupChatId);
 }
 
 class ChatScreenState extends State<ChatScreen> {
+  ChatScreenState({Key key, @required this.groupChatId});
+
   FirebaseUser currentUser;
   var listMessage;
-  String groupChatId;
   SharedPreferences prefs;
-
+  final String groupChatId;
   File imageFile;
   bool isLoading;
   bool isShowSticker;
@@ -49,11 +61,20 @@ class ChatScreenState extends State<ChatScreen> {
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
 
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
+  }
+
   @override
   void initState() {
     super.initState();
-    currentUser=LoginScreenState.User;
-    debugPrint('Email : ${currentUser.email}');
+    getCurrentUser();
+//    FirebaseAuth.instance.currentUser().then((value){
+//      currentUser=value;
+//      debugPrint("Value : ${value.uid}");
+//    });
+
+//    debugPrint('Email : ${currentUser.email}');
 //    CollectionReference reference = Firestore.instance.collection('rooms').document('BTS').collection('Messages');
 //    reference.snapshots().listen((querySnapshot) {
 //      querySnapshot.documentChanges.forEach((change) {
@@ -75,7 +96,6 @@ class ChatScreenState extends State<ChatScreen> {
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
-
   }
 
   void onFocusChange() {
@@ -109,24 +129,26 @@ class ChatScreenState extends State<ChatScreen> {
 
   Future uploadFile() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    final StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+    final StorageReference reference =
+        FirebaseStorage.instance.ref().child(fileName);
     final StorageUploadTask uploadTask = reference.putFile(imageFile);
 
-    imageUrl='https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${fileName}?alt=media';
+    imageUrl =
+        'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${fileName}?alt=media';
     onSendMessage(imageUrl, 1);
     debugPrint('Sent');
   }
 
   void onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
-    debugPrint('Content $content');
-//    debugPrint('UID ${currentUser.uid}');
+    debugPrint("Group Chat ID : $groupChatId");
     if (content.trim() != '') {
       textEditingController.clear();
       var documentReference = Firestore.instance
           .collection('rooms')
-          .document('BTS')
-          .collection('Messages').document();
+          .document(groupChatId)
+          .collection('Messages')
+          .document();
 //          .document(DateTime.now().millisecondsSinceEpoch.toString());
       Firestore.instance.runTransaction((transaction) async {
         await transaction.set(
@@ -139,6 +161,7 @@ class ChatScreenState extends State<ChatScreen> {
           },
         );
       });
+      debugPrint("Sent Message");
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
@@ -614,32 +637,31 @@ class ChatScreenState extends State<ChatScreen> {
   Widget buildListMessage() {
     return Flexible(
       child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('rooms')
-                  .document('BTS')
-                  .collection('Messages')
-                  .orderBy('timestamp', descending: true)
-                  .limit(20)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(themeColor)));
-                } else {
-                  listMessage = snapshot.data.documents;
-                  return ListView.builder(
-                    padding: EdgeInsets.all(10.0),
-                    itemBuilder: (context, index) =>
-                        buildItem(index, snapshot.data.documents[index]),
-                    itemCount: snapshot.data.documents.length,
-                    reverse: true,
-                    controller: listScrollController,
-                  );
-                }
-              },
-            ),
+        stream: Firestore.instance
+            .collection('rooms')
+            .document(groupChatId)
+            .collection('Messages')
+            .orderBy('timestamp', descending: true)
+            .limit(20)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
+          } else {
+            listMessage = snapshot.data.documents;
+            return ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemBuilder: (context, index) =>
+                  buildItem(index, snapshot.data.documents[index]),
+              itemCount: snapshot.data.documents.length,
+              reverse: true,
+              controller: listScrollController,
+            );
+          }
+        },
+      ),
     );
   }
 }
