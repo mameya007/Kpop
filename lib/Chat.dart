@@ -131,7 +131,6 @@ class ChatScreenState extends State<ChatScreen> {
     final StorageReference reference =
         FirebaseStorage.instance.ref().child(fileName);
     final StorageUploadTask uploadTask = reference.putFile(imageFile);
-
     imageUrl =
         'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media';
     onSendMessage(imageUrl, 1);
@@ -210,7 +209,6 @@ class ChatScreenState extends State<ChatScreen> {
               : document['type'] == 1
                   // Image
                   ? Container(
-            
                       child: Material(
                         child: CachedNetworkImage(
                           placeholder: Container(
@@ -228,6 +226,10 @@ class ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                           ),
+                          imageUrl: document['content'],
+                          width: 200.0,
+                          height: 200.0,
+                          fit: BoxFit.cover,
                           errorWidget: Material(
                             child: Image.asset(
                               'images/img_not_available.jpeg',
@@ -239,10 +241,6 @@ class ChatScreenState extends State<ChatScreen> {
                               Radius.circular(8.0),
                             ),
                           ),
-                          imageUrl: document['content'],
-                          width: 200.0,
-                          height: 200.0,
-                          fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
