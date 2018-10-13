@@ -42,6 +42,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   String aboutMe = '';
   String photoUrl = '';
   bool isLoading = false;
+  Image photoProfile;
   File avatarImageFile;
   final FocusNode focusNodeNickname = new FocusNode();
   final FocusNode focusNodeAboutMe = new FocusNode();
@@ -59,8 +60,11 @@ class SettingsScreenState extends State<SettingsScreen> {
     photoUrl = prefs.getString('photoUrl') ?? '';
     Fluttertoast.showToast(msg: photoUrl);
     controllerNickname = new TextEditingController(text: nickname);
+    setProfilePicture();
     // Force refresh input
-    setState(() {});
+    setState(() {
+
+    });
   }
 
   Future getImage() async {
@@ -69,9 +73,10 @@ class SettingsScreenState extends State<SettingsScreen> {
     if (image != null) {
       setState(() {
         avatarImageFile = image;
+        isLoading = true;
       });
     }
-
+    uploadFile();
   }
 
   Future uploadFile() async {
@@ -83,8 +88,8 @@ class SettingsScreenState extends State<SettingsScreen> {
     Firestore.instance.collection('users').document(id).updateData(
         {'nickname': nickname, 'photoUrl': photoUrl}).then((data) async {
       await prefs.setString('photoUrl', photoUrl);
-//      Fluttertoast.showToast(msg: "Upload success");
       debugPrint('UploadSuccess');
+//      Fluttertoast.showToast(msg: "Upload success");
       setState(() {
         isLoading = false;
       });
@@ -104,7 +109,6 @@ class SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       isLoading = true;
     });
-    if (avatarImageFile != null) uploadFile();
     Firestore.instance.collection('users').document(id).updateData(
         {'nickname': nickname, 'photoUrl': photoUrl}).then((data) async {
       await prefs.setString('nickname', nickname);
@@ -125,9 +129,11 @@ class SettingsScreenState extends State<SettingsScreen> {
           msg: err.toString(), toastLength: Toast.LENGTH_LONG);
     });
   }
-  Image getProfilePicture()
+   setProfilePicture()
   {
-    return Image.network(photoUrl,width: 90.0,height: 90.0,alignment: Alignment.center,fit: BoxFit.cover);
+    photoUrl =
+    "https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$id?alt=media";
+    photoProfile=Image.network(photoUrl,width: 90.0,height: 90.0,alignment: Alignment.center,fit: BoxFit.cover);
   }
   @override
   Widget build(BuildContext context) {
@@ -144,7 +150,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       (avatarImageFile == null)
                           ? (photoUrl != ''
                               ? Material(
-                                    child:getProfilePicture(),
+                                    child:photoProfile,
 //                                  child: CachedNetworkImage(
 //                                    placeholder: Container(
 //                                      child: CircularProgressIndicator(
