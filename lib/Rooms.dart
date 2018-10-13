@@ -226,7 +226,7 @@ class RoomsState extends State<Rooms> {
         child: Row(
           children: <Widget>[
             Material(
-              child: Image.asset("${document.documentID}.jpg",width: 50.0,height: 50.0,fit: BoxFit.cover,alignment: Alignment.center),
+              child: Image.asset("images/${document.documentID}.jpg",width: 50.0,height: 50.0,fit: BoxFit.cover,alignment: Alignment.center),
               borderRadius: BorderRadius.all(Radius.elliptical(50.0,50.0)),
             ),
             new Flexible(
