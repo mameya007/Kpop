@@ -112,7 +112,7 @@ class ChatScreenState extends State<ChatScreen> {
     if (image != null) {
       setState(() {
         imageFile = image;
-//        isLoading = true;
+        isLoading = true;
       });
     }
     uploadFile();
@@ -128,11 +128,14 @@ class ChatScreenState extends State<ChatScreen> {
 
   Future uploadFile() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    final StorageReference reference =
-        FirebaseStorage.instance.ref().child(fileName);
-    final StorageUploadTask uploadTask = reference.putFile(imageFile);
+    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+    StorageUploadTask uploadTask = reference.putFile(imageFile);
+    StorageTaskSnapshot snapshot= await uploadTask.onComplete;
     imageUrl =
         'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media';
+    setState(() {
+      isLoading = false;
+    });
     onSendMessage(imageUrl, 1);
     debugPrint('Sent');
   }
@@ -226,10 +229,6 @@ class ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                           ),
-                          imageUrl: document['content'],
-                          width: 200.0,
-                          height: 200.0,
-                          fit: BoxFit.cover,
                           errorWidget: Material(
                             child: Image.asset(
                               'images/img_not_available.jpeg',
@@ -241,6 +240,10 @@ class ChatScreenState extends State<ChatScreen> {
                               Radius.circular(8.0),
                             ),
                           ),
+                          imageUrl: document['content'],
+                          width: 200.0,
+                          height: 200.0,
+                          fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
