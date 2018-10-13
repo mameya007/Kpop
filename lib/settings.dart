@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
+
+import 'Rooms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,6 @@ class SettingsScreenState extends State<SettingsScreen> {
   String aboutMe = '';
   String photoUrl = '';
   bool isLoading = false;
-  Image photoProfile;
   File avatarImageFile;
   final FocusNode focusNodeNickname = new FocusNode();
   final FocusNode focusNodeAboutMe = new FocusNode();
@@ -55,15 +55,13 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   void readLocal() async {
     prefs = await SharedPreferences.getInstance();
+    avatarImageFile=null;
     id = prefs.getString('id') ?? '';
     nickname = prefs.getString('nickname') ?? '';
     photoUrl = prefs.getString('photoUrl') ?? '';
-    Fluttertoast.showToast(msg: photoUrl);
     controllerNickname = new TextEditingController(text: nickname);
-    setProfilePicture();
     // Force refresh input
     setState(() {
-
     });
   }
 
@@ -119,7 +117,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       debugPrint("Update Success");
       Fluttertoast.showToast(
           msg: "Update Success", toastLength: Toast.LENGTH_SHORT);
-      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Rooms()));
     }).catchError((err) {
       setState(() {
         isLoading = false;
@@ -128,12 +126,6 @@ class SettingsScreenState extends State<SettingsScreen> {
       Fluttertoast.showToast(
           msg: err.toString(), toastLength: Toast.LENGTH_LONG);
     });
-  }
-   setProfilePicture()
-  {
-    photoUrl =
-    "https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$id?alt=media";
-    photoProfile=Image.network(photoUrl,width: 90.0,height: 90.0,alignment: Alignment.center,fit: BoxFit.cover);
   }
   @override
   Widget build(BuildContext context) {
@@ -150,7 +142,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       (avatarImageFile == null)
                           ? (photoUrl != ''
                               ? Material(
-                                    child:photoProfile,
+                                    child:Image.network(photoUrl,width: 90.0,height: 90.0,fit: BoxFit.cover),
 //                                  child: CachedNetworkImage(
 //                                    placeholder: Container(
 //                                      child: CircularProgressIndicator(

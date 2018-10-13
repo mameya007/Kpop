@@ -60,16 +60,72 @@ class LoginScreenState extends State<LoginScreen> {
     prefs = await SharedPreferences.getInstance();
     isLoggedIn=prefs.getBool("isLoggedIn");
     if (isLoggedIn) {
-      Fluttertoast.showToast(msg: "Connected",toastLength: Toast.LENGTH_SHORT);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Rooms()),
-      );
+        Login();
     }
 
     this.setState(() {
       isLoading = false;
     });
+  }
+  void Login() async
+  {
+    prefs = await SharedPreferences.getInstance();
+
+    this.setState(() {
+      isLoading = true;
+    });
+        final FacebookAccessToken accessToken = await facebookSignIn.currentAccessToken;
+        currentUser = await firebaseAuth.signInWithFacebook(
+            accessToken:accessToken.token);
+        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
+    if (currentUser != null) {
+      // Check is already sign up
+      final QuerySnapshot result = await Firestore.instance
+          .collection('users')
+          .where('id', isEqualTo: currentUser.uid)
+          .getDocuments();
+      final List<DocumentSnapshot> documents = result.documents;
+      if (documents.length == 0) {
+        // Update data to server if new user
+        Firestore.instance
+            .collection('users')
+            .document(currentUser.uid)
+            .setData({
+          'nickname': currentUser.displayName,
+          'photoUrl': currentUser.photoUrl,
+          'id': currentUser.uid
+        });
+
+        // Write data to local
+        await prefs.setString('id', currentUser.uid);
+        await prefs.setString('nickname', currentUser.displayName);
+        await prefs.setString('photoUrl', currentUser.photoUrl);
+        await prefs.setBool("isLoggedIn", true);
+      } else {
+        // Write data to local
+        await prefs.setString('id', documents[0]['id']);
+        await prefs.setString('nickname', documents[0]['nickname']);
+        await prefs.setString('photoUrl', documents[0]['photoUrl']);
+        await prefs.setBool("isLoggedIn", true);
+      }
+
+      this.setState(() {
+        isLoading = false;
+      });
+      final QuerySnapshot docs =
+          await Firestore.instance.collection("rooms").getDocuments();
+      List<DocumentSnapshot> _rooms = docs.documents;
+      Fluttertoast.showToast(msg: "Connected",toastLength: Toast.LENGTH_SHORT);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Rooms(),
+          ));
+    } else {
+      this.setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void handleSignIn() async {
