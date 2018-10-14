@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'Choices.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'const.dart';
 import 'package:intl/intl.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class Chat extends StatelessWidget {
   final String groupChatId;
@@ -19,21 +18,9 @@ class Chat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          groupChatId,
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: new ChatScreen(
-        groupChatId: groupChatId,
-      ),
-    );
+    return new ChatScreen(groupChatId: groupChatId);
   }
 }
-
 class ChatScreen extends StatefulWidget {
   final String groupChatId;
 
@@ -45,6 +32,7 @@ class ChatScreen extends StatefulWidget {
 
 class ChatScreenState extends State<ChatScreen> {
   ChatScreenState({Key key, @required this.groupChatId});
+
 
   FirebaseUser currentUser;
   var listMessage;
@@ -59,7 +47,18 @@ class ChatScreenState extends State<ChatScreen> {
       new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
+  List<Choice> choices = const <Choice>[
+    const Choice(title: 'Memebers', icon: Icons.contacts),
+    const Choice(title: 'Log out', icon: Icons.exit_to_app)
+  ];
 
+  void onItemMenuPress(Choice choice) {
+    if (choice.title == 'Log out') {
+      debugPrint("LOGZAEAZE");
+    } else {
+      debugPrint("ezaeazeazrzar");
+    }
+  }
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
@@ -274,7 +273,8 @@ class ChatScreenState extends State<ChatScreen> {
                             height: 35.0,
                             padding: EdgeInsets.all(10.0),
                           ),
-                          imageUrl: 'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${document['idFrom']}?alt=media',
+                          imageUrl:
+                              'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${document['idFrom']}?alt=media',
                           width: 50.0,
                           height: 50.0,
                           fit: BoxFit.cover,
@@ -402,36 +402,75 @@ class ChatScreenState extends State<ChatScreen> {
         isShowSticker = false;
       });
     } else {
-      Navigator.pop(context);
+      debugPrint("BackPressed");
+//      Navigator.pop(context);
     }
 
     return Future.value(false);
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              // List of messages
-              buildListMessage(),
-
-              // Sticker
-              (isShowSticker ? buildSticker() : Container()),
-
-              // Input content
-              buildInput(),
+    return new Scaffold(
+          appBar: new AppBar(
+            title: new Text(
+              groupChatId,
+              style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+            ),
+//        automaticallyImplyLeading: false,
+            centerTitle: true,
+            actions: <Widget>[
+              PopupMenuButton<Choice>(
+                onSelected: onItemMenuPress,
+                itemBuilder: (BuildContext context) {
+                  return choices.map((Choice choice) {
+                    return PopupMenuItem<Choice>(
+                        value: choice,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              choice.icon,
+                              color: primaryColor,
+                            ),
+                            Container(
+                              width: 10.0,
+                            ),
+                            Text(
+                              choice.title,
+                              style: TextStyle(color: primaryColor),
+                            ),
+                          ],
+                        ));
+                  }).toList();
+                },
+              ),
             ],
           ),
+          body: WillPopScope(
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    // List of messages
+                    buildListMessage(),
 
-          // Loading
-          buildLoading()
-        ],
-      ),
-      onWillPop: onBackPress,
-    );
+                    // Sticker
+                    (isShowSticker ? buildSticker() : Container()),
+
+                    // Input content
+                    buildInput(),
+                  ],
+                ),
+
+                // Loading
+                buildLoading()
+              ],
+            ),
+            onWillPop: onBackPress,
+          )
+      );
+
   }
 
   Widget buildSticker() {

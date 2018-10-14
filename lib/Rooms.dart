@@ -8,6 +8,7 @@ import 'Chat.dart';
 import 'main.dart';
 import 'const.dart';
 import 'settings.dart';
+import 'Choices.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -292,11 +293,4 @@ class RoomsState extends State<Rooms> {
     });
     Navigator.pop(context, MaterialPageRoute(builder: (context) => MyApp()));
   }
-}
-
-class Choice {
-  const Choice({this.title, this.icon});
-
-  final String title;
-  final IconData icon;
 }
