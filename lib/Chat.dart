@@ -42,7 +42,6 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLoading;
   bool isShowSticker;
   String imageUrl;
-
   final TextEditingController textEditingController =
       new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
@@ -52,6 +51,18 @@ class ChatScreenState extends State<ChatScreen> {
     const Choice(title: 'Log out', icon: Icons.exit_to_app)
   ];
 
+  void addToOnlineMembers()
+  {
+    Firestore.instance.collection('rooms').document(groupChatId).collection('Members').document().setData({
+      "displayName" : currentUser.displayName
+    });
+    var reference =Firestore.instance.collection('rooms').document(groupChatId).collection('Members');
+    reference.snapshots().listen((snapshot){
+      snapshot.documentChanges.forEach((change){
+    debugPrint(change.document['displayName']);
+      });
+    });
+  }
   void onItemMenuPress(Choice choice) {
     if (choice.title == 'Log out') {
       debugPrint("LOGZAEAZE");
@@ -61,6 +72,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
+    addToOnlineMembers();
   }
 
   @override
