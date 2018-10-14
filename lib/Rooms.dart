@@ -290,7 +290,7 @@ class RoomsState extends State<Rooms> {
     this.setState(() {
       isLoading = false;
     });
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+    Navigator.pop(context, MaterialPageRoute(builder: (context) => MyApp()));
   }
 }
 

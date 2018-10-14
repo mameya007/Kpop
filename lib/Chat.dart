@@ -130,7 +130,7 @@ class ChatScreenState extends State<ChatScreen> {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = reference.putFile(imageFile);
-    StorageTaskSnapshot snapshot= await uploadTask.onComplete;
+    StorageTaskSnapshot snapshot = await uploadTask.onComplete;
     imageUrl =
         'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media';
     setState(() {
@@ -174,18 +174,6 @@ class ChatScreenState extends State<ChatScreen> {
     } else {
       debugPrint('Nothing to send');
     }
-  }
-
-  Future<String> getPhotoByUid(String uid) async {
-    var data = await Firestore.instance
-        .collection("users")
-        .where('id', isEqualTo: uid)
-        .getDocuments();
-    var documents = data.documents;
-    if (documents.length == 0)
-      return "";
-    else
-      return documents[0]['photoUrl'];
   }
 
   Widget buildItem(int index, DocumentSnapshot document) {
@@ -286,10 +274,9 @@ class ChatScreenState extends State<ChatScreen> {
                             height: 35.0,
                             padding: EdgeInsets.all(10.0),
                           ),
-                          imageUrl:
-                              getPhotoByUid(document['idFrom']).toString(),
-                          width: 35.0,
-                          height: 35.0,
+                          imageUrl: 'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${document['idFrom']}?alt=media',
+                          width: 50.0,
+                          height: 50.0,
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.all(

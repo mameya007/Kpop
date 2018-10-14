@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -37,11 +36,10 @@ class LoginScreenState extends State<LoginScreen> {
   static final FacebookLogin facebookSignIn = new FacebookLogin();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SharedPreferences prefs;
-  final bool firstOpen = true;
   bool isLoading = false;
   bool isLoggedIn = false;
   static FirebaseUser currentUser;
-  // TODO : Flutter Toasts Msgs
+
   @override
   void initState() {
     super.initState();
@@ -53,31 +51,21 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   void isSignedIn() async {
-    this.setState(() {
-      isLoading = true;
-    });
-
-    prefs = await SharedPreferences.getInstance();
-    isLoggedIn=prefs.getBool("isLoggedIn");
-    if (isLoggedIn) {
-        Login();
-    }
-
-    this.setState(() {
-      isLoading = false;
-    });
+    isLoggedIn = await facebookSignIn.isLoggedIn;
+    if (isLoggedIn) Login();
   }
-  void Login() async
-  {
-    prefs = await SharedPreferences.getInstance();
 
+  void Login() async {
     this.setState(() {
       isLoading = true;
     });
-        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
-        final FacebookAccessToken accessToken = await facebookSignIn.currentAccessToken;
-        currentUser = await firebaseAuth.signInWithFacebook(
-            accessToken:accessToken.token);
+    prefs = await SharedPreferences.getInstance();
+    Fluttertoast.showToast(
+        msg: "Connecting...", toastLength: Toast.LENGTH_SHORT);
+    final FacebookAccessToken accessToken =
+        await facebookSignIn.currentAccessToken;
+    currentUser =
+        await firebaseAuth.signInWithFacebook(accessToken: accessToken.token);
     if (currentUser != null) {
       // Check is already sign up
       final QuerySnapshot result = await Firestore.instance
@@ -100,13 +88,11 @@ class LoginScreenState extends State<LoginScreen> {
         await prefs.setString('id', currentUser.uid);
         await prefs.setString('nickname', currentUser.displayName);
         await prefs.setString('photoUrl', currentUser.photoUrl);
-        await prefs.setBool("isLoggedIn", true);
       } else {
         // Write data to local
         await prefs.setString('id', documents[0]['id']);
         await prefs.setString('nickname', documents[0]['nickname']);
         await prefs.setString('photoUrl', documents[0]['photoUrl']);
-        await prefs.setBool("isLoggedIn", true);
       }
 
       this.setState(() {
@@ -115,7 +101,7 @@ class LoginScreenState extends State<LoginScreen> {
       final QuerySnapshot docs =
           await Firestore.instance.collection("rooms").getDocuments();
       List<DocumentSnapshot> _rooms = docs.documents;
-      Fluttertoast.showToast(msg: "Connected",toastLength: Toast.LENGTH_SHORT);
+      Fluttertoast.showToast(msg: "Connected", toastLength: Toast.LENGTH_SHORT);
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -139,7 +125,8 @@ class LoginScreenState extends State<LoginScreen> {
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final FacebookAccessToken accessToken = result.accessToken;
-        Fluttertoast.showToast(msg: "Connecting...",toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(
+            msg: "Connecting...", toastLength: Toast.LENGTH_SHORT);
         currentUser = await firebaseAuth.signInWithFacebook(
             accessToken: result.accessToken.token);
         debugPrint('''
@@ -155,12 +142,14 @@ class LoginScreenState extends State<LoginScreen> {
         break;
       case FacebookLoginStatus.cancelledByUser:
         debugPrint('Login cancelled by the user.');
-        Fluttertoast.showToast(msg: "Login has been cancelled",toastLength: Toast.LENGTH_LONG);
+        Fluttertoast.showToast(
+            msg: "Login has been cancelled", toastLength: Toast.LENGTH_LONG);
         break;
       case FacebookLoginStatus.error:
         debugPrint('Something went wrong with the login process.\n'
             'Here\'s the error Facebook gave us: ${result.errorMessage}');
-        Fluttertoast.showToast(msg: result.errorMessage,toastLength: Toast.LENGTH_LONG);
+        Fluttertoast.showToast(
+            msg: result.errorMessage, toastLength: Toast.LENGTH_LONG);
         break;
     }
 
@@ -202,7 +191,7 @@ class LoginScreenState extends State<LoginScreen> {
       final QuerySnapshot docs =
           await Firestore.instance.collection("rooms").getDocuments();
       List<DocumentSnapshot> _rooms = docs.documents;
-      Fluttertoast.showToast(msg: "Connected",toastLength: Toast.LENGTH_SHORT);
+      Fluttertoast.showToast(msg: "Connected", toastLength: Toast.LENGTH_SHORT);
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -223,6 +212,7 @@ class LoginScreenState extends State<LoginScreen> {
             widget.title,
             style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
           ),
+          automaticallyImplyLeading: false,
           centerTitle: true,
         ),
         body: Stack(

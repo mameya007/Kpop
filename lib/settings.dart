@@ -79,25 +79,29 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future uploadFile() async {
-    String fileName = "$id${DateTime.now().millisecondsSinceEpoch.toString()}";
+    String fileName = id;
     StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = reference.putFile(avatarImageFile);
-    photoUrl =
-        "https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media";
-    Firestore.instance.collection('users').document(id).updateData(
-        {'nickname': nickname, 'photoUrl': photoUrl}).then((data) async {
-      await prefs.setString('photoUrl', photoUrl);
-      debugPrint('UploadSuccess');
-//      Fluttertoast.showToast(msg: "Upload success");
-      setState(() {
-        isLoading = false;
-      });
+    reference.getDownloadURL().then((dynamic url){
+      photoUrl=url.toString();
+      Firestore.instance.collection('users').document(id).updateData({
+        'nickname': nickname,
+        'photoUrl': photoUrl
+      }).then((data) async {
+        await prefs.setString('photoUrl', photoUrl);
+        setState(() {
+          isLoading = false;
+        });
+
+        Fluttertoast.showToast(msg: "Upload success");
+    });
     }).catchError((err) {
       setState(() {
         isLoading = false;
       });
 
       Fluttertoast.showToast(msg: err.toString());
+
     });
   }
 
@@ -108,16 +112,19 @@ class SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       isLoading = true;
     });
-    Firestore.instance.collection('users').document(id).updateData(
-        {'nickname': nickname, 'photoUrl': photoUrl}).then((data) async {
+
+    Firestore.instance.collection('users').document(id).updateData({
+      'nickname': nickname,
+      'photoUrl': photoUrl
+    }).then((data) async {
       await prefs.setString('nickname', nickname);
       await prefs.setString('photoUrl', photoUrl);
+
       setState(() {
         isLoading = false;
       });
-      debugPrint("Update Success");
-      Fluttertoast.showToast(
-          msg: "Update Success", toastLength: Toast.LENGTH_SHORT);
+
+      Fluttertoast.showToast(msg: "Update success");
       Navigator.push(context, MaterialPageRoute(builder: (context) => Rooms()));
     }).catchError((err) {
       setState(() {
