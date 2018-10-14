@@ -21,6 +21,7 @@ class Chat extends StatelessWidget {
     return new ChatScreen(groupChatId: groupChatId);
   }
 }
+
 class ChatScreen extends StatefulWidget {
   final String groupChatId;
 
@@ -36,40 +37,53 @@ class ChatScreenState extends State<ChatScreen> {
 
   FirebaseUser currentUser;
   var listMessage;
+  var listMembers;
   SharedPreferences prefs;
   final String groupChatId;
   File imageFile;
   bool isLoading;
   bool isShowSticker;
+  bool isShowMembers;
   String imageUrl;
   final TextEditingController textEditingController =
-      new TextEditingController();
+  new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
   List<Choice> choices = const <Choice>[
-    const Choice(title: 'Memebers', icon: Icons.contacts),
+    const Choice(title: 'Members', icon: Icons.contacts),
     const Choice(title: 'Log out', icon: Icons.exit_to_app)
   ];
 
-  void addToOnlineMembers()
-  {
-    Firestore.instance.collection('rooms').document(groupChatId).collection('Members').document().setData({
-      "displayName" : currentUser.displayName
+  void addToOnlineMembers() {
+    Firestore.instance.collection('rooms').document(groupChatId).collection(
+        'Members').document(currentUser.uid).setData({
+      "displayName": currentUser.displayName
     });
-    var reference =Firestore.instance.collection('rooms').document(groupChatId).collection('Members');
-    reference.snapshots().listen((snapshot){
-      snapshot.documentChanges.forEach((change){
-    debugPrint(change.document['displayName']);
+    var reference = Firestore.instance.collection('rooms')
+        .document(groupChatId)
+        .collection('Members');
+    reference.snapshots().listen((snapshot) {
+      snapshot.documentChanges.forEach((change) {
+        debugPrint(change.document['displayName']);
       });
     });
   }
+
   void onItemMenuPress(Choice choice) {
-    if (choice.title == 'Log out') {
-      debugPrint("LOGZAEAZE");
+    if (choice.title == 'Members') {
+      debugPrint("Displaying Members");
+//      isShowMembers=true;
+//      setState(() {
+//
+//      });
     } else {
+      setState(() {
+
+      });
       debugPrint("ezaeazeazrzar");
     }
   }
+
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
     addToOnlineMembers();
@@ -102,11 +116,62 @@ class ChatScreenState extends State<ChatScreen> {
 //      });
 //    });
     focusNode.addListener(onFocusChange);
-
+    isShowMembers=false;
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
   }
+
+  Widget getMemebers() {
+//    return Flexible(
+//      child: StreamBuilder(
+//        stream: Firestore.instance
+//            .collection('rooms')
+//            .document(groupChatId)
+//            .collection('Members')
+//            .snapshots(),
+//        builder: (context, snapshot) {
+//          if (!snapshot.hasData) {
+//            return Center(
+//                child: CircularProgressIndicator(
+//                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
+//          } else {
+//            listMembers = snapshot.data.documents;
+//            debugPrint("Length ${snapshot.data.documents.length}");
+//            return ListView.builder(
+//              padding: EdgeInsets.all(10.0),
+//              itemBuilder: (context, index) =>
+//                  buildMember(snapshot.data.documents[index]),
+//              itemCount: snapshot.data.documents.length,
+//              reverse: true,
+//              controller: listScrollController,
+//            );
+//          }
+//        },
+//      ),
+//    );
+  }
+
+//  Widget buildMember(DocumentSnapshot document) {
+//      debugPrint("Display Name  ${document['displayName']}");
+//      // Right (my message)
+//      return Row(
+//        children: <Widget>[
+//           Container(
+//            child: Text(
+//              document['displayName'],
+//              style: TextStyle(color: primaryColor),
+//            ),
+////            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+//            width: 200.0,
+//            margin: EdgeInsets.only(
+//                bottom:  10.0,
+//                right: 10.0),
+//          )
+//        ],
+////        mainAxisAlignment: MainAxisAlignment.end,
+//      );
+//  }
 
   void onFocusChange() {
     if (focusNode.hasFocus) {
@@ -138,12 +203,15 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    String fileName = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = reference.putFile(imageFile);
     StorageTaskSnapshot snapshot = await uploadTask.onComplete;
     imageUrl =
-        'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media';
+    'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/$fileName?alt=media';
     setState(() {
       isLoading = false;
     });
@@ -173,7 +241,10 @@ class ChatScreenState extends State<ChatScreen> {
           documentReference,
           {
             'idFrom': currentUser.uid,
-            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+            'timestamp': DateTime
+                .now()
+                .millisecondsSinceEpoch
+                .toString(),
             'content': content,
             'type': type
           },
@@ -193,75 +264,75 @@ class ChatScreenState extends State<ChatScreen> {
       return Row(
         children: <Widget>[
           document['type'] == 0
-              // Text
+          // Text
               ? Container(
-                  child: Text(
-                    document['content'],
-                    style: TextStyle(color: primaryColor),
-                  ),
-                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                      color: greyColor2,
-                      borderRadius: BorderRadius.circular(8.0)),
-                  margin: EdgeInsets.only(
-                      bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                      right: 10.0),
-                )
+            child: Text(
+              document['content'],
+              style: TextStyle(color: primaryColor),
+            ),
+            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+            width: 200.0,
+            decoration: BoxDecoration(
+                color: greyColor2,
+                borderRadius: BorderRadius.circular(8.0)),
+            margin: EdgeInsets.only(
+                bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                right: 10.0),
+          )
               : document['type'] == 1
-                  // Image
-                  ? Container(
-                      child: Material(
-                        child: CachedNetworkImage(
-                          placeholder: Container(
-                            child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(themeColor),
-                            ),
-                            width: 200.0,
-                            height: 200.0,
-                            padding: EdgeInsets.all(70.0),
-                            decoration: BoxDecoration(
-                              color: greyColor2,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(8.0),
-                              ),
-                            ),
-                          ),
-                          errorWidget: Material(
-                            child: Image.asset(
-                              'images/img_not_available.jpeg',
-                              width: 200.0,
-                              height: 200.0,
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
-                            ),
-                          ),
-                          imageUrl: document['content'],
-                          width: 200.0,
-                          height: 200.0,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
-                      margin: EdgeInsets.only(
-                          bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                          right: 10.0),
-                    )
-                  // Sticker
-                  : Container(
-                      child: new Image.asset(
-                        'images/${document['content']}.gif',
-                        width: 100.0,
-                        height: 100.0,
-                        fit: BoxFit.cover,
-                      ),
-                      margin: EdgeInsets.only(
-                          bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                          right: 10.0),
+          // Image
+              ? Container(
+            child: Material(
+              child: CachedNetworkImage(
+                placeholder: Container(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                    AlwaysStoppedAnimation<Color>(themeColor),
+                  ),
+                  width: 200.0,
+                  height: 200.0,
+                  padding: EdgeInsets.all(70.0),
+                  decoration: BoxDecoration(
+                    color: greyColor2,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
                     ),
+                  ),
+                ),
+                errorWidget: Material(
+                  child: Image.asset(
+                    'images/img_not_available.jpeg',
+                    width: 200.0,
+                    height: 200.0,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+                imageUrl: document['content'],
+                width: 200.0,
+                height: 200.0,
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            ),
+            margin: EdgeInsets.only(
+                bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                right: 10.0),
+          )
+          // Sticker
+              : Container(
+            child: new Image.asset(
+              'images/${document['content']}.gif',
+              width: 100.0,
+              height: 100.0,
+              fit: BoxFit.cover,
+            ),
+            margin: EdgeInsets.only(
+                bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                right: 10.0),
+          ),
         ],
         mainAxisAlignment: MainAxisAlignment.end,
       );
@@ -274,109 +345,109 @@ class ChatScreenState extends State<ChatScreen> {
               children: <Widget>[
                 isLastMessageLeft(index)
                     ? Material(
-                        child: CachedNetworkImage(
-                          placeholder: Container(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.0,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(themeColor),
-                            ),
-                            width: 35.0,
-                            height: 35.0,
-                            padding: EdgeInsets.all(10.0),
-                          ),
-                          imageUrl:
-                              'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${document['idFrom']}?alt=media',
-                          width: 50.0,
-                          height: 50.0,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(18.0),
-                        ),
-                      )
+                  child: CachedNetworkImage(
+                    placeholder: Container(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.0,
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(themeColor),
+                      ),
+                      width: 35.0,
+                      height: 35.0,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    imageUrl:
+                    'https://firebasestorage.googleapis.com/v0/b/kpop-18b02.appspot.com/o/${document['idFrom']}?alt=media',
+                    width: 50.0,
+                    height: 50.0,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(18.0),
+                  ),
+                )
                     : Container(width: 35.0),
                 document['type'] == 0
                     ? Container(
-                        child: Text(
-                          document['content'],
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                        width: 200.0,
-                        decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(8.0)),
-                        margin: EdgeInsets.only(left: 10.0),
-                      )
+                  child: Text(
+                    document['content'],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                  width: 200.0,
+                  decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(8.0)),
+                  margin: EdgeInsets.only(left: 10.0),
+                )
                     : document['type'] == 1
-                        ? Container(
-                            child: Material(
-                              child: CachedNetworkImage(
-                                placeholder: Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        themeColor),
-                                  ),
-                                  width: 200.0,
-                                  height: 200.0,
-                                  padding: EdgeInsets.all(70.0),
-                                  decoration: BoxDecoration(
-                                    color: greyColor2,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: Material(
-                                  child: Image.asset(
-                                    'images/img_not_available.jpeg',
-                                    width: 200.0,
-                                    height: 200.0,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                ),
-                                imageUrl: document['content'],
-                                width: 200.0,
-                                height: 200.0,
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            margin: EdgeInsets.only(left: 10.0),
-                          )
-                        : Container(
-                            child: new Image.asset(
-                              'images/${document['content']}.gif',
-                              width: 100.0,
-                              height: 100.0,
-                              fit: BoxFit.cover,
-                            ),
-                            margin: EdgeInsets.only(
-                                bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                                right: 10.0),
+                    ? Container(
+                  child: Material(
+                    child: CachedNetworkImage(
+                      placeholder: Container(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              themeColor),
+                        ),
+                        width: 200.0,
+                        height: 200.0,
+                        padding: EdgeInsets.all(70.0),
+                        decoration: BoxDecoration(
+                          color: greyColor2,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.0),
                           ),
+                        ),
+                      ),
+                      errorWidget: Material(
+                        child: Image.asset(
+                          'images/img_not_available.jpeg',
+                          width: 200.0,
+                          height: 200.0,
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                      imageUrl: document['content'],
+                      width: 200.0,
+                      height: 200.0,
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  margin: EdgeInsets.only(left: 10.0),
+                )
+                    : Container(
+                  child: new Image.asset(
+                    'images/${document['content']}.gif',
+                    width: 100.0,
+                    height: 100.0,
+                    fit: BoxFit.cover,
+                  ),
+                  margin: EdgeInsets.only(
+                      bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                      right: 10.0),
+                ),
               ],
             ),
 
             // Time
             isLastMessageLeft(index)
                 ? Container(
-                    child: Text(
-                      DateFormat('dd MMM kk:mm').format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              int.parse(document['timestamp']))),
-                      style: TextStyle(
-                          color: greyColor,
-                          fontSize: 12.0,
-                          fontStyle: FontStyle.italic),
-                    ),
-                    margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
-                  )
+              child: Text(
+                DateFormat('dd MMM kk:mm').format(
+                    DateTime.fromMillisecondsSinceEpoch(
+                        int.parse(document['timestamp']))),
+                style: TextStyle(
+                    color: greyColor,
+                    fontSize: 12.0,
+                    fontStyle: FontStyle.italic),
+              ),
+              margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
+            )
                 : Container()
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,8 +459,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   bool isLastMessageLeft(int index) {
     if ((index > 0 &&
-            listMessage != null &&
-            listMessage[index - 1]['idFrom'] == currentUser.uid) ||
+        listMessage != null &&
+        listMessage[index - 1]['idFrom'] == currentUser.uid) ||
         index == 0) {
       return true;
     } else {
@@ -399,8 +470,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   bool isLastMessageRight(int index) {
     if ((index > 0 &&
-            listMessage != null &&
-            listMessage[index - 1]['idFrom'] != currentUser.uid) ||
+        listMessage != null &&
+        listMessage[index - 1]['idFrom'] != currentUser.uid) ||
         index == 0) {
       return true;
     } else {
@@ -415,7 +486,7 @@ class ChatScreenState extends State<ChatScreen> {
       });
     } else {
       debugPrint("BackPressed");
-//      Navigator.pop(context);
+      Navigator.pop(context);
     }
 
     return Future.value(false);
@@ -425,64 +496,64 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-          appBar: new AppBar(
-            title: new Text(
-              groupChatId,
-              style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
-            ),
+        appBar: new AppBar(
+          title: new Text(
+            groupChatId,
+            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          ),
 //        automaticallyImplyLeading: false,
-            centerTitle: true,
-            actions: <Widget>[
-              PopupMenuButton<Choice>(
-                onSelected: onItemMenuPress,
-                itemBuilder: (BuildContext context) {
-                  return choices.map((Choice choice) {
-                    return PopupMenuItem<Choice>(
-                        value: choice,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              choice.icon,
-                              color: primaryColor,
-                            ),
-                            Container(
-                              width: 10.0,
-                            ),
-                            Text(
-                              choice.title,
-                              style: TextStyle(color: primaryColor),
-                            ),
-                          ],
-                        ));
-                  }).toList();
-                },
+          centerTitle: true,
+          actions: <Widget>[
+            PopupMenuButton<Choice>(
+              onSelected: onItemMenuPress,
+              itemBuilder: (BuildContext context) {
+                return choices.map((Choice choice) {
+                  return PopupMenuItem<Choice>(
+                      value: choice,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            choice.icon,
+                            color: primaryColor,
+                          ),
+                          Container(
+                            width: 10.0,
+                          ),
+                          Text(
+                            choice.title,
+                            style: TextStyle(color: primaryColor),
+                          ),
+                        ],
+                      ));
+                }).toList();
+              },
+            ),
+          ],
+        ),
+        body: WillPopScope(
+          child: Stack(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  // List of messages
+                  buildListMessage(),
+                  //Members
+                  (isShowMembers ? getMemebers() : Container()),
+                  // Sticker
+                  (isShowSticker ? buildSticker() : Container()),
+
+                  // Input content
+                  buildInput(),
+                ],
               ),
+
+              // Loading
+              buildLoading()
             ],
           ),
-          body: WillPopScope(
-            child: Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    // List of messages
-                    buildListMessage(),
-
-                    // Sticker
-                    (isShowSticker ? buildSticker() : Container()),
-
-                    // Input content
-                    buildInput(),
-                  ],
-                ),
-
-                // Loading
-                buildLoading()
-              ],
-            ),
-            onWillPop: onBackPress,
-          )
-      );
-
+          onWillPop: onBackPress,
+        )
+    );
   }
 
   Widget buildSticker() {
@@ -590,7 +661,7 @@ class ChatScreenState extends State<ChatScreen> {
       ),
       decoration: new BoxDecoration(
           border:
-              new Border(top: new BorderSide(color: greyColor2, width: 0.5)),
+          new Border(top: new BorderSide(color: greyColor2, width: 0.5)),
           color: Colors.white),
       padding: EdgeInsets.all(5.0),
       height: 180.0,
@@ -601,12 +672,12 @@ class ChatScreenState extends State<ChatScreen> {
     return Positioned(
       child: isLoading
           ? Container(
-              child: Center(
-                child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)),
-              ),
-              color: Colors.white.withOpacity(0.8),
-            )
+        child: Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(themeColor)),
+        ),
+        color: Colors.white.withOpacity(0.8),
+      )
           : Container(),
     );
   }
@@ -672,7 +743,7 @@ class ChatScreenState extends State<ChatScreen> {
       height: 50.0,
       decoration: new BoxDecoration(
           border:
-              new Border(top: new BorderSide(color: greyColor2, width: 0.5)),
+          new Border(top: new BorderSide(color: greyColor2, width: 0.5)),
           color: Colors.white),
     );
   }
