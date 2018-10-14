@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'Choices.dart';
+import 'utils.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,13 +37,11 @@ class ChatScreenState extends State<ChatScreen> {
 
   FirebaseUser currentUser;
   var listMessage;
-  var listMembers;
   SharedPreferences prefs;
   final String groupChatId;
   File imageFile;
   bool isLoading;
   bool isShowSticker;
-  bool isShowMembers;
   String imageUrl;
   final TextEditingController textEditingController =
   new TextEditingController();
@@ -72,10 +70,7 @@ class ChatScreenState extends State<ChatScreen> {
   void onItemMenuPress(Choice choice) {
     if (choice.title == 'Members') {
       debugPrint("Displaying Members");
-//      isShowMembers=true;
-//      setState(() {
-//
-//      });
+      Navigator.push(context, new MaterialPageRoute(builder: (context) => new MembersScreen(groupChatId: groupChatId,)));
     } else {
       setState(() {
 
@@ -116,62 +111,10 @@ class ChatScreenState extends State<ChatScreen> {
 //      });
 //    });
     focusNode.addListener(onFocusChange);
-    isShowMembers=false;
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
   }
-
-  Widget getMemebers() {
-//    return Flexible(
-//      child: StreamBuilder(
-//        stream: Firestore.instance
-//            .collection('rooms')
-//            .document(groupChatId)
-//            .collection('Members')
-//            .snapshots(),
-//        builder: (context, snapshot) {
-//          if (!snapshot.hasData) {
-//            return Center(
-//                child: CircularProgressIndicator(
-//                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
-//          } else {
-//            listMembers = snapshot.data.documents;
-//            debugPrint("Length ${snapshot.data.documents.length}");
-//            return ListView.builder(
-//              padding: EdgeInsets.all(10.0),
-//              itemBuilder: (context, index) =>
-//                  buildMember(snapshot.data.documents[index]),
-//              itemCount: snapshot.data.documents.length,
-//              reverse: true,
-//              controller: listScrollController,
-//            );
-//          }
-//        },
-//      ),
-//    );
-  }
-
-//  Widget buildMember(DocumentSnapshot document) {
-//      debugPrint("Display Name  ${document['displayName']}");
-//      // Right (my message)
-//      return Row(
-//        children: <Widget>[
-//           Container(
-//            child: Text(
-//              document['displayName'],
-//              style: TextStyle(color: primaryColor),
-//            ),
-////            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-//            width: 200.0,
-//            margin: EdgeInsets.only(
-//                bottom:  10.0,
-//                right: 10.0),
-//          )
-//        ],
-////        mainAxisAlignment: MainAxisAlignment.end,
-//      );
-//  }
 
   void onFocusChange() {
     if (focusNode.hasFocus) {
@@ -492,7 +435,6 @@ class ChatScreenState extends State<ChatScreen> {
     return Future.value(false);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -537,8 +479,6 @@ class ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   // List of messages
                   buildListMessage(),
-                  //Members
-                  (isShowMembers ? getMemebers() : Container()),
                   // Sticker
                   (isShowSticker ? buildSticker() : Container()),
 
