@@ -15,7 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_launcher_icons: ^0.6.1
   transparent_image: ^0.1.0
   fluttertoast: ^2.0.9
   flutter_facebook_login: ^1.1.1
@@ -29,6 +29,16 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+
+
+flutter_icons:
+  android: true
+#  ios: "Example-Icon"
+  image_path: "images/Icon.jpg"
+#  image_path_android: "assets/icon/icon_android.png"
+#  image_path_ios: "assets/icon/icon_ios.png"
+#  adaptive_icon_background: "#FFFAFAFA"
+#  adaptive_icon_foreground: "assets/icon/icon-foreground.png"
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +72,8 @@ flutter:
      - images/mimi9.gif
      - images/BTS.jpg
      - images/EXO.jpg
+     - images/Icon.jpg
+     - images/Logo.png
 
 
 

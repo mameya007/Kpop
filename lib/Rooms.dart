@@ -29,105 +29,11 @@ class RoomsState extends State<Rooms> {
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
 
-  Future<bool> onBackPress() {
-    openDialog();
-    return Future.value(false);
-  }
-
-  Future<Null> openDialog() async {
-    switch (await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            contentPadding:
-                EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
-            children: <Widget>[
-              Container(
-                color: themeColor,
-                margin: EdgeInsets.all(0.0),
-                padding: EdgeInsets.only(bottom: 10.0, top: 10.0),
-                height: 100.0,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Icon(
-                        Icons.exit_to_app,
-                        size: 30.0,
-                        color: Colors.white,
-                      ),
-                      margin: EdgeInsets.only(bottom: 10.0),
-                    ),
-                    Text(
-                      'Exit app',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Are you sure to exit app?',
-                      style: TextStyle(color: Colors.white70, fontSize: 14.0),
-                    ),
-                  ],
-                ),
-              ),
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, 0);
-                },
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      child: Icon(
-                        Icons.cancel,
-                        color: primaryColor,
-                      ),
-                      margin: EdgeInsets.only(right: 10.0),
-                    ),
-                    Text(
-                      'CANCEL',
-                      style: TextStyle(
-                          color: primaryColor, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              ),
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, 1);
-                },
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      child: Icon(
-                        Icons.check_circle,
-                        color: primaryColor,
-                      ),
-                      margin: EdgeInsets.only(right: 10.0),
-                    ),
-                    Text(
-                      'YES',
-                      style: TextStyle(
-                          color: primaryColor, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          );
-        })) {
-      case 0:
-        break;
-      case 1:
-        exit(0);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return new Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'Rooms',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
@@ -215,6 +121,12 @@ class RoomsState extends State<Rooms> {
   }
 
 
+  Future<bool> onBackPress() {
+//    openDialog();
+    debugPrint("Rooms");
+    return Future.value(false);
+  }
+
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
 //    debugPrint(''''
 //    Nom : ${document.documentID}
@@ -227,8 +139,12 @@ class RoomsState extends State<Rooms> {
         child: Row(
           children: <Widget>[
             Material(
-              child: Image.asset("images/${document.documentID}.jpg",width: 50.0,height: 50.0,fit: BoxFit.cover,alignment: Alignment.center),
-              borderRadius: BorderRadius.all(Radius.elliptical(50.0,50.0)),
+              child: Image.asset("images/${document.documentID}.jpg",
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center),
+              borderRadius: BorderRadius.all(Radius.elliptical(50.0, 50.0)),
             ),
             new Flexible(
               child: Container(
@@ -259,7 +175,11 @@ class RoomsState extends State<Rooms> {
         ),
         onPressed: () {
           Navigator.push(
-              context, new MaterialPageRoute(builder: (context) => new Chat(groupChatId: document.documentID,)));
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => new Chat(
+                        groupChatId: document.documentID,
+                      )));
         },
         color: greyColor2,
         padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
@@ -274,12 +194,12 @@ class RoomsState extends State<Rooms> {
     if (choice.title == 'Log out') {
       handleSignOut();
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Settings()));
     }
   }
 
   Future<Null> handleSignOut() async {
-
     this.setState(() {
       isLoading = true;
     });
@@ -287,7 +207,8 @@ class RoomsState extends State<Rooms> {
     LoginScreenState.facebookSignIn.logOut();
     await FirebaseAuth.instance.signOut();
     await prefs.setBool("isLoggedIn", false);
-    Fluttertoast.showToast(msg: "Disconnected",toastLength: Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(
+        msg: "Disconnected", toastLength: Toast.LENGTH_SHORT);
     this.setState(() {
       isLoading = false;
     });
