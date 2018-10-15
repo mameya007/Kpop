@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.7.4/android/cloud_firestore.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.7.4/android/cloud_firestore.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.5.20/android/firebase_auth.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.5.20/android/firebase_auth.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.2.5+1/android/firebase_core.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.2.5+1/android/firebase_core.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_storage-1.0.4/android/firebase_storage.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/firebase_storage-1.0.4/android/firebase_storage.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_login-1.1.1/android/flutter_facebook_login.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_login-1.1.1/android/flutter_facebook_login.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-2.0.9/android/fluttertoast.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-2.0.9/android/fluttertoast.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.4.10/android/image_picker.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.4.10/android/image_picker.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-0.4.1/android/path_provider.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-0.4.1/android/path_provider.iml" />
+      <module fileurl="file://E:/Flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/android/shared_preferences.iml" filepath="E:/Flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/android/shared_preferences.iml" />
+    </modules>
+  </component>
+</project>
