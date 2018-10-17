@@ -17,10 +17,10 @@ class Feeds extends StatefulWidget {
 }
 
 class RoomsState extends State<Feeds> {
-  List<Game> games= const <Game>[
-    const Game(title: 'Guess the song',type: 0),
-    const Game(title: 'Guess the band',type: 1),
-    const Game(title: 'Guess the idol',type: 2),
+   List<Game> games =[
+    new Game(picture:Image.asset("images/Guess the song.png"),title: 'Guess the song',type: 0),
+    new Game(picture:Image.asset("images/Guess the band.png"),title: 'Guess the band',type: 1),
+    new Game(picture:Image.asset("images/Guess the idol.png"),title: 'Guess the idol',type: 2),
   ];
   TabController tabController;
   bool isLoading = false;
@@ -34,7 +34,11 @@ class RoomsState extends State<Feeds> {
     const Choice(title: 'Settings', icon: Icons.settings),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return new  DefaultTabController(length: 2,

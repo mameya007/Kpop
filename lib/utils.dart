@@ -19,10 +19,73 @@ class Choice {
 }
 
 class Game {
-  const Game({this.title, this.type});
+  const Game({this.picture, this.title, this.type});
 
+  final Image picture;
   final String title;
   final int type;
+}
+
+class Idol {
+  const Idol({this.picture, this.name, this.band});
+
+  final Image picture;
+  final String name;
+  final Band band;
+}
+
+class Idols {
+  static final Idols instance = new Idols._internal();
+
+  factory Idols() {
+    return instance;
+  }
+
+  Idols._internal();
+
+  Idol jin = new Idol(
+      picture: Image.asset("images/BTS/Members/Jin/Jin.jpg"),
+      name: "JIN",
+      band: Bands.instance.bts);
+}
+
+class Band {
+  const Band({this.members});
+
+  final List<Idol> members;
+}
+
+class Bands {
+  static final Bands instance = new Bands._internal();
+
+  factory Bands() {
+    return instance;
+  }
+
+  Bands._internal();
+
+  List<Idol> _bts = [
+    Idols.instance.jin,
+  ];
+  Band bts = new Band(members: Bands.instance._bts);
+}
+
+class Song {
+  const Song({this.picture, this.title, this.band});
+
+  final Image picture;
+  final String title;
+  final Band band;
+}
+
+class Songs {
+  static final Songs instance = new Songs._internal();
+
+  factory Songs() {
+    return instance;
+  }
+
+  Songs._internal();
 }
 
 class MembersScreen extends StatefulWidget {

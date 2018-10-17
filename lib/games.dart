@@ -70,4 +70,13 @@ class Games extends StatelessWidget {
   {
     debugPrint("To Game Index $index");
   }
+  void openChoices()
+  {
+
+  }
+  void startGame(Band band)
+  {
+
+  }
+
 }
