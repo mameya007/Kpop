@@ -18,34 +18,47 @@ class Choice {
   final IconData icon;
 }
 
+class Game {
+  const Game({this.title, this.type});
+
+  final String title;
+  final int type;
+}
+
 class MembersScreen extends StatefulWidget {
   String groupChatId;
 
-
   MembersScreen({Key key, @required this.groupChatId});
-
-
 
   @override
   State createState() => new MembersScreenState(groupChatId: groupChatId);
 }
-class MembersScreenState extends State<MembersScreen>{
+
+class MembersScreenState extends State<MembersScreen> {
   MembersScreenState({Key key, @required this.groupChatId});
+
   String groupChatId;
   int numbersOnline;
   final ScrollController listScrollController = new ScrollController();
   var listMembers;
   ListView listView;
+
   @override
   void initState() {
     super.initState();
-    Firestore.instance.collection("rooms").document(groupChatId).collection("Members").snapshots().listen((data){
-            debugPrint("Hello ${data.documents.length}");
-    setState(() {
-      numbersOnline=data.documents.length;
-    });
+    Firestore.instance
+        .collection("rooms")
+        .document(groupChatId)
+        .collection("Members")
+        .snapshots()
+        .listen((data) {
+      debugPrint("Hello ${data.documents.length}");
+      setState(() {
+        numbersOnline = data.documents.length;
+      });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +84,7 @@ class MembersScreenState extends State<MembersScreen>{
           } else {
             listMembers = snapshot.data.documents;
             debugPrint("Length $numbersOnline");
-            listView=ListView.builder(
+            listView = ListView.builder(
               padding: EdgeInsets.all(10.0),
               itemBuilder: (context, index) =>
                   buildMember(snapshot.data.documents[index]),
@@ -88,11 +101,10 @@ class MembersScreenState extends State<MembersScreen>{
 
   Widget buildMember(DocumentSnapshot document) {
     debugPrint("Display Name  ${document['displayName']}");
-      return
-        new Text(
-          document['displayName'],
-          style: TextStyle(color: primaryColor),
-          textAlign: TextAlign.center,
+    return new Text(
+      document['displayName'],
+      style: TextStyle(color: primaryColor),
+      textAlign: TextAlign.center,
 //        ),
     );
   }

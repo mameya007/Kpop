@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'Rooms.dart';
+import 'feeds.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +125,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       });
 
       Fluttertoast.showToast(msg: "Update success");
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Rooms()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Feeds()));
     }).catchError((err) {
       setState(() {
         isLoading = false;

@@ -15,6 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   flutter_launcher_icons: ^0.6.1
   transparent_image: ^0.1.0
   fluttertoast: ^2.0.9
@@ -74,6 +75,9 @@ flutter:
      - images/EXO.jpg
      - images/Icon.jpg
      - images/Logo.png
+     - images/Guess the idol.png
+     - images/Guess the band.png
+     - images/Guess the song.png
 
 
 

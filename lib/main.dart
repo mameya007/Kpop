@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:kpop/Rooms.dart';
+import 'package:kpop/feeds.dart';
 import 'const.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,11 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chat Demo',
+      title: 'Angels',
       theme: new ThemeData(
         primaryColor: themeColor,
       ),
-      home: LoginScreen(title: 'CHAT DEMO'),
+      home: LoginScreen(title: 'Angels'),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -203,7 +203,7 @@ class LoginScreenState extends State<LoginScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Rooms(),
+            builder: (context) => Feeds(),
           ));
     } else {
       this.setState(() {
@@ -293,7 +293,7 @@ class LoginScreenState extends State<LoginScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Rooms(),
+            builder: (context) => Feeds(),
           ));
     } else {
       this.setState(() {
