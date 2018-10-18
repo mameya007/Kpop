@@ -14,7 +14,6 @@ class GSongState extends State<GSong>{
   int _chances;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

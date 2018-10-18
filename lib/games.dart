@@ -10,19 +10,68 @@ import 'utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class Games extends StatelessWidget {
+class Games extends StatefulWidget {
   final List<Game> games;
+
   Games({Key key, @required this.games}) : super(key: key);
+
+  @override
+  State createState() => new GamesState(games: games);
+}
+
+class GamesState extends State<Games> {
+  var bands;
+  int toShow;
+  int type;
+  final List<Game> games;
+
+  GamesState({Key key, @required this.games});
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        padding: EdgeInsets.all(10.0),
-        itemBuilder: (context, index) =>
-    buildItem(context,games[index]),
-    itemCount: games.length,
+    return WillPopScope(
+      child: new Center(child: getCurrentList()),
+      onWillPop: onBackPress,
     );
   }
-  Widget buildItem(BuildContext context,Game game) {
+
+  Future<bool> onBackPress() {
+    debugPrint("Back Pressed");
+    setState(() {
+      if (toShow > 0) toShow = toShow - 1;
+    });
+    return Future.value(false);
+  }
+
+  Widget getCurrentList() {
+    if (toShow == 0)
+      return ListView.builder(
+        padding: EdgeInsets.all(10.0),
+        itemBuilder: (context, index) => buildItem(context, games[index]),
+        itemCount: games.length,
+      );
+    if (toShow == 1)
+      return new Center(
+        child: new Row(
+          children: <Widget>[
+            new FlatButton(onPressed: (){startGame(null);}, child: new Text("All Random")),
+            new FlatButton(onPressed: () {_toNextList();}, child: new Text("Select Band"))
+          ],
+        ),
+      );
+    if(toShow==2)
+      return displayAllBands();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    toShow = 0;
+    type=0;
+    bands=new Bands();
+  }
+
+  Widget buildItem(BuildContext context, Game game) {
     return new Container(
       child: FlatButton(
         child: Row(
@@ -54,8 +103,9 @@ class Games extends StatelessWidget {
             ),
           ],
         ),
-        onPressed: (){
-          _toGame(game.type);
+        onPressed: () {
+          _toNextList();
+          setState(() {type=game.type;});
         },
         color: greyColor2,
         padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
@@ -66,17 +116,35 @@ class Games extends StatelessWidget {
     );
   }
 
-  void _toGame(int index)
-  {
-    debugPrint("To Game Index $index");
-  }
-  void openChoices()
-  {
-
-  }
-  void startGame(Band band)
-  {
-
+  void _toNextList() {
+    debugPrint(Bands.instance.bts.toString());
+//    setState(() {
+//      toShow = toShow + 1;
+//    });
   }
 
+
+  Widget displayAllBands() {
+//    List<Band> bands = Bands.all;
+    return ListView.builder(
+      itemCount: bands.length,
+      itemBuilder: (context, index) {
+        return new Center(
+          child: new FlatButton(
+              onPressed: () {
+                startGame(bands[index]);
+              },
+              child: new Text("${bands[index].name}")),
+        );
+      },
+    );
+  }
+
+  void startGame(Band band) {
+    if (band == null) {
+      //TODO: ALL Random
+    } else {
+      //TODO: From One Band
+    }
+  }
 }

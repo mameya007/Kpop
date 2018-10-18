@@ -38,7 +38,6 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
     _timer = new Timer(const Duration(seconds: 5),toMainScreen);
   }
 

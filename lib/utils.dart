@@ -50,8 +50,8 @@ class Idols {
 }
 
 class Band {
-  const Band({this.members});
-
+  const Band({this.members,this.name});
+  final String name;
   final List<Idol> members;
 }
 
@@ -65,9 +65,12 @@ class Bands {
   Bands._internal();
 
   List<Idol> _bts = [
-    Idols.instance.jin,
+    Idols.instance.jin,Idols.instance.jin
   ];
-  Band bts = new Band(members: Bands.instance._bts);
+  Band bts = new Band(members: Bands.instance._bts,name: 'BTS');
+  List<Band> all =[
+  Bands.instance.bts,
+  ];
 }
 
 class Song {
