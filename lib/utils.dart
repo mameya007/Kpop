@@ -27,50 +27,45 @@ class Game {
 }
 
 class Idol {
-  const Idol({this.picture, this.name, this.band});
+  Idol({this.picture, this.name, this.band});
 
-  final Image picture;
-  final String name;
-  final Band band;
+  Image picture;
+  String name;
+  Band band;
 }
 
 class Idols {
-  static final Idols instance = new Idols._internal();
-
-  factory Idols() {
-    return instance;
+  static List<Idol> all;
+  static void init() {
+    jin = new Idol(
+        picture: Image.asset("images/BTS/Members/Jin/Jin.jpg"),
+        name: "JIN",
+        band: Bands.bts);
+    all=[jin];
   }
 
-  Idols._internal();
-
-  Idol jin = new Idol(
-      picture: Image.asset("images/BTS/Members/Jin/Jin.jpg"),
-      name: "JIN",
-      band: Bands.instance.bts);
+  static Idol jin;
 }
 
 class Band {
-  const Band({this.members,this.name});
-  final String name;
+  const Band({this.members, this.name});
+
   final List<Idol> members;
+  final String name;
 }
 
 class Bands {
-  static final Bands instance = new Bands._internal();
+  static List<Idol> _bts;
+  static Band bts;
+  static List<Band> all;
 
-  factory Bands() {
-    return instance;
+  static void init() {
+    _bts = [Idols.jin];
+    bts = new Band(members: _bts, name: 'BTS');
+    all = [
+      Bands.bts,
+    ];
   }
-
-  Bands._internal();
-
-  List<Idol> _bts = [
-    Idols.instance.jin,Idols.instance.jin
-  ];
-  Band bts = new Band(members: Bands.instance._bts,name: 'BTS');
-  List<Band> all =[
-  Bands.instance.bts,
-  ];
 }
 
 class Song {
@@ -82,13 +77,7 @@ class Song {
 }
 
 class Songs {
-  static final Songs instance = new Songs._internal();
-
-  factory Songs() {
-    return instance;
-  }
-
-  Songs._internal();
+//  static void init();
 }
 
 class MembersScreen extends StatefulWidget {

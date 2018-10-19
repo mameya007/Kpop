@@ -7,28 +7,30 @@ import 'main.dart';
 import 'const.dart';
 import 'settings.dart';
 import 'utils.dart';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Games extends StatefulWidget {
-  final List<Game> games;
-
-  Games({Key key, @required this.games}) : super(key: key);
 
   @override
-  State createState() => new GamesState(games: games);
+  State createState() => new GamesState();
 }
 
 class GamesState extends State<Games> {
+  List<Game> games;
   var bands;
-  int toShow;
+  int toShow=0;
   int type;
-  final List<Game> games;
+  Idol jin = new Idol(
+      picture: Image.asset("images/BTS/Members/Jin/Jin.jpg"),
+      name: "JIN",
+      band: null);
 
-  GamesState({Key key, @required this.games});
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       child: new Center(child: getCurrentList()),
       onWillPop: onBackPress,
@@ -50,7 +52,7 @@ class GamesState extends State<Games> {
         itemBuilder: (context, index) => buildItem(context, games[index]),
         itemCount: games.length,
       );
-    if (toShow == 1)
+    else if (toShow == 1)
       return new Center(
         child: new Row(
           children: <Widget>[
@@ -59,16 +61,20 @@ class GamesState extends State<Games> {
           ],
         ),
       );
-    if(toShow==2)
+    else if(toShow==2)
       return displayAllBands();
   }
 
   @override
   void initState() {
     super.initState();
+    games=[
+      new Game(picture:Image.asset("images/Guess the song.png"),title: 'Guess the song',type: 0),
+      new Game(picture:Image.asset("images/Guess the band.png"),title: 'Guess the band',type: 1),
+      new Game(picture:Image.asset("images/Guess the idol.png"),title: 'Guess the idol',type: 2),
+    ];
     toShow = 0;
     type=0;
-    bands=new Bands();
   }
 
   Widget buildItem(BuildContext context, Game game) {
@@ -117,10 +123,12 @@ class GamesState extends State<Games> {
   }
 
   void _toNextList() {
-    debugPrint(Bands.instance.bts.toString());
-//    setState(() {
-//      toShow = toShow + 1;
-//    });
+    Idols.init();
+    Bands.init();
+    debugPrint(Bands.bts.members[0].name);
+    setState(() {
+      toShow = toShow + 1;
+    });
   }
 
 

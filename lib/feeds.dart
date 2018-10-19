@@ -13,16 +13,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class Feeds extends StatefulWidget {
   @override
-  State createState() => new RoomsState();
+  State createState() => new FeedsState();
 }
 
-class RoomsState extends State<Feeds> {
-   List<Game> games =[
-    new Game(picture:Image.asset("images/Guess the song.png"),title: 'Guess the song',type: 0),
-    new Game(picture:Image.asset("images/Guess the band.png"),title: 'Guess the band',type: 1),
-    new Game(picture:Image.asset("images/Guess the idol.png"),title: 'Guess the idol',type: 2),
-  ];
-  TabController tabController;
+class FeedsState extends State<Feeds> {
+
   bool isLoading = false;
   static int size = 0;
 
@@ -84,7 +79,7 @@ class RoomsState extends State<Feeds> {
         ),
           preferredSize: Size.fromHeight(100.0),
     ),
-        body: TabBarView(children: <Widget>[Rooms(), Games(games: games,)])),
+        body: TabBarView(children: <Widget>[ Rooms(), Games()])),
     );
   }
 
