@@ -123,8 +123,6 @@ class GamesState extends State<Games> {
   }
 
   void _toNextList() {
-    Idols.init();
-    Bands.init();
     debugPrint(Bands.bts.members[0].name);
     setState(() {
       toShow = toShow + 1;

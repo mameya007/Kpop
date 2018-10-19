@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'main.dart';
+import 'utils.dart';
 
 void main() {
   runApp(new MaterialApp(
@@ -11,11 +12,25 @@ void main() {
 
 class Splash extends StatefulWidget {
   @override
-  _SplashState createState() => new _SplashState();
+  State createState() => new SplashState();
 }
 
-class _SplashState extends State<Splash> {
-  Timer _timer;
+class SplashState extends State<Splash> {
+
+
+  @override
+  void initState()
+  {
+    super.initState();
+    initAll();
+  }
+
+  void initAll()
+  {
+    Bands.init();
+    Idols.init();
+  }
+
 
   @override
   Widget build(BuildContext context) {
