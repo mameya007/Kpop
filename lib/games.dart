@@ -9,6 +9,7 @@ import 'settings.dart';
 import 'utils.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'GIdol.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -204,5 +205,8 @@ class GamesState extends State<Games> {
       //TODO: ALL Random
     }
     debugPrint("Selected : ${band.name}");
+    Navigator.push(context , new MaterialPageRoute(
+      builder: (context) => GIdol(),
+    ));
   }
 }
