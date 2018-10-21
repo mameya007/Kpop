@@ -8,11 +8,11 @@ import 'const.dart';
 import 'settings.dart';
 import 'utils.dart';
 import 'dart:convert';
+import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Games extends StatefulWidget {
-
   @override
   State createState() => new GamesState();
 }
@@ -20,17 +20,11 @@ class Games extends StatefulWidget {
 class GamesState extends State<Games> {
   List<Game> games;
   var bands;
-  int toShow=0;
+  int toShow;
   int type;
-  Idol jin = new Idol(
-      picture: Image.asset("images/BTS/Members/Jin/Jin.jpg"),
-      name: "JIN",
-      band: null);
-
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       child: new Center(child: getCurrentList()),
       onWillPop: onBackPress,
@@ -45,36 +39,34 @@ class GamesState extends State<Games> {
     return Future.value(false);
   }
 
-  Widget getCurrentList() {
-    if (toShow == 0)
-      return ListView.builder(
-        padding: EdgeInsets.all(10.0),
-        itemBuilder: (context, index) => buildItem(context, games[index]),
-        itemCount: games.length,
-      );
-    else if (toShow == 1)
-      return new Center(
-        child: new Row(
-          children: <Widget>[
-            new FlatButton(onPressed: (){startGame(null);}, child: new Text("All Random")),
-            new FlatButton(onPressed: () {_toNextList();}, child: new Text("Select Band"))
-          ],
-        ),
-      );
-    else if(toShow==2)
-      return displayAllBands();
+  @override
+  void dispose() {
+    super.dispose();
+    toShow = 0;
+    debugPrint("Disposed");
   }
 
   @override
   void initState() {
     super.initState();
-    games=[
-      new Game(picture:Image.asset("images/Guess the song.png"),title: 'Guess the song',type: 0),
-      new Game(picture:Image.asset("images/Guess the band.png"),title: 'Guess the band',type: 1),
-      new Game(picture:Image.asset("images/Guess the idol.png"),title: 'Guess the idol',type: 2),
+    games = [
+      new Game(
+          picture: Image.asset("images/Guess the song.png"),
+          title: 'Guess the song',
+          type: 0),
+      new Game(
+          picture: Image.asset("images/Guess the band.png"),
+          title: 'Guess the band',
+          type: 1),
+      new Game(
+          picture: Image.asset("images/Guess the idol.png"),
+          title: 'Guess the idol',
+          type: 2),
     ];
     toShow = 0;
-    type=0;
+    type = 0;
+    Bands.init();
+    Idols.init();
   }
 
   Widget buildItem(BuildContext context, Game game) {
@@ -111,7 +103,9 @@ class GamesState extends State<Games> {
         ),
         onPressed: () {
           _toNextList();
-          setState(() {type=game.type;});
+          setState(() {
+            type = game.type;
+          });
         },
         color: greyColor2,
         padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
@@ -122,25 +116,82 @@ class GamesState extends State<Games> {
     );
   }
 
+  Widget getCurrentList() {
+    if (toShow == 0)
+      return ListView.builder(
+        padding: EdgeInsets.all(10.0),
+        itemBuilder: (context, index) => buildItem(context, games[index]),
+        itemCount: games.length,
+      );
+    else if (toShow == 1)
+      return new Center(
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new FlatButton(
+              onPressed: () {
+                startGame(null);
+              },
+              color: Colors.red,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0)),
+              child: new Text(
+                "All Random",
+                style: new TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.orangeAccent,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            new FlatButton(
+                onPressed: () {
+                  _toNextList();
+                },
+                color: Colors.red,
+                shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0)),
+                child: new Text(
+                  "Select Band",
+                  style: new TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.orangeAccent,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold),
+                ))
+          ],
+        ),
+      );
+    else if (toShow == 2) return displayAllBands();
+  }
+
   void _toNextList() {
-    debugPrint(Bands.bts.members[0].name);
     setState(() {
       toShow = toShow + 1;
     });
   }
 
-
   Widget displayAllBands() {
-//    List<Band> bands = Bands.all;
     return ListView.builder(
-      itemCount: bands.length,
+      itemCount: Bands.all.length,
       itemBuilder: (context, index) {
         return new Center(
           child: new FlatButton(
               onPressed: () {
-                startGame(bands[index]);
+                startGame(Bands.all[index]);
               },
-              child: new Text("${bands[index].name}")),
+              color: Colors.red,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0)),
+              child: new Text(
+                "${Bands.all[index].name}",
+                style: new TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.black54,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold),
+              )),
         );
       },
     );
@@ -148,9 +199,10 @@ class GamesState extends State<Games> {
 
   void startGame(Band band) {
     if (band == null) {
+      band = Bands.all[Random.secure().nextInt(Bands.all.length)];
+      debugPrint("Selected : ${band.name}");
       //TODO: ALL Random
-    } else {
-      //TODO: From One Band
     }
+    debugPrint("Selected : ${band.name}");
   }
 }

@@ -16,21 +16,7 @@ class Splash extends StatefulWidget {
 }
 
 class SplashState extends State<Splash> {
-
-
-  @override
-  void initState()
-  {
-    super.initState();
-    initAll();
-  }
-
-  void initAll()
-  {
-    Bands.init();
-    Idols.init();
-  }
-
+  var _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +35,14 @@ class SplashState extends State<Splash> {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
-    _timer = new Timer(const Duration(seconds: 5),toMainScreen);
+    _timer = new Timer(const Duration(seconds: 5), toMainScreen);
   }
 
   void toMainScreen() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MyApp()));
   }
 }
