@@ -66,8 +66,8 @@ class GamesState extends State<Games> {
     ];
     toShow = 0;
     type = 0;
-    Bands.init();
     Idols.init();
+    Bands.init();
   }
 
   Widget buildItem(BuildContext context, Game game) {
@@ -204,9 +204,9 @@ class GamesState extends State<Games> {
       debugPrint("Selected : ${band.name}");
       //TODO: ALL Random
     }
-    debugPrint("Selected : ${band.name}");
+//    debugPrint("Selected : ${band.name}");
     Navigator.push(context , new MaterialPageRoute(
-      builder: (context) => GIdol(),
+      builder: (context) => GIdol(currentBand: band,)
     ));
   }
 }

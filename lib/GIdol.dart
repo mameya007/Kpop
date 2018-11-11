@@ -7,20 +7,17 @@ import 'const.dart';
 
 class GIdol extends StatefulWidget {
   final Band currentBand;
-  final bool random;
 
-  GIdol({Key key, @required this.currentBand, @required this.random})
-      : super(key: key);
+  GIdol({Key key, @required this.currentBand}) : super(key: key);
 
   @override
-  State createState() =>
-      new GIdolState(currentBand: currentBand, random: random);
+  State createState() => new GIdolState(currentBand: currentBand);
 }
 
 class GIdolState extends State<GIdol> {
-  GIdolState({Key key, @required this.currentBand, @required this.random});
+  GIdolState({Key key, @required this.currentBand});
 
-  bool random;
+  final _random = new Random();
   Idol currentIdol;
   Band currentBand;
   Timer _timer;
@@ -32,6 +29,12 @@ class GIdolState extends State<GIdol> {
   @override
   void initState() {
     super.initState();
+    debugPrint(currentBand.members.length.toString());
+    currentIdol =
+        currentBand.members[_random.nextInt(currentBand.members.length)];
+    debugPrint("Idol Name: " + currentIdol.name);
+    debugPrint("Idol Pictures " + currentIdol.pictures.length.toString());
+    currentIdol.pictures.shuffle();
     maxSeconds = 60;
     _remainingTime = maxSeconds;
     resetTimer();
@@ -72,12 +75,36 @@ class GIdolState extends State<GIdol> {
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
-      body: new Container(
-        child: new Text("Time remaning : $_remainingTime"),
-//      child: new Image.asset(currentBand),
+      body: new Stack(
+        children: <Widget>[
+          new Container(child: new Text("Time remaning : $_remainingTime")),
+          new ListView.builder(
+            padding: EdgeInsets.all(10.0),
+            itemBuilder: (context, index) => buildItem(index),
+            itemCount: 2,
+//            reverse: true,
+          ),
+        ],
       ),
     );
-    // TODO: implement build
+  }
+
+  Widget buildItem(int index) {
+    debugPrint(currentIdol.pictures[index].toString());
+//    return DecoratedBox(
+//      decoration: BoxDecoration(
+//        image: DecorationImage(
+//          image: AssetImage("images/BTS/Members/Jin/"+(index+1).toString()+".jpg"),
+//          // ...
+//        ),
+//        // ...
+//      ),
+//    );
+    return new Container(
+      child: new Image.asset("images/BTS/Members/Jin/"+(index+1).toString()+".jpg"),
+      height: 75.0,
+      width: 75.0,
+    );
   }
 
   void getRandomBand() {

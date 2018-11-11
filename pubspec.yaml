@@ -79,6 +79,9 @@ flutter:
 #     - images/Guess the band.png
 #     - images/Guess the song.png
      - images/
+     - images/BTS
+     - images/BTS/Members
+     - images/BTS/Members/Jin/
 
 
 

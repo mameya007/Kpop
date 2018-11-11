@@ -27,9 +27,9 @@ class Game {
 }
 
 class Idol {
-  Idol({this.picture, this.name, this.band});
+  Idol({this.pictures, this.name, this.band});
 
-  Image picture;
+  List<Image> pictures;
   String name;
   Band band;
 }
@@ -38,7 +38,10 @@ class Idols {
   static List<Idol> all;
   static void init() {
     jin = new Idol(
-        picture: Image.asset("images/BTS/Members/Jin/Jin.jpg"),
+        pictures: [Image.asset("images/BTS/Members/Jin/1.jpg"),
+        Image.asset("images/BTS/Members/Jin/2.jpg"),
+        Image.asset("images/BTS/Members/Jin/3.jpg"),
+        Image.asset("images/BTS/Members/Jin/4.jpg")],
         name: "JIN",
         band: Bands.bts);
     all=[jin];
