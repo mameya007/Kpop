@@ -29,6 +29,9 @@ class GIdolState extends State<GIdol> {
   @override
   void initState() {
     super.initState();
+    if (currentBand == null) {
+      currentBand=getRandomBand();
+    }
     debugPrint(currentBand.members.length.toString());
     currentIdol =
         currentBand.members[_random.nextInt(currentBand.members.length)];
@@ -78,38 +81,47 @@ class GIdolState extends State<GIdol> {
       body: new Stack(
         children: <Widget>[
           new Container(child: new Text("Time remaning : $_remainingTime")),
-          new ListView.builder(
-            padding: EdgeInsets.all(10.0),
-            itemBuilder: (context, index) => buildItem(index),
-            itemCount: 2,
+          new Container(
+            margin: EdgeInsets.symmetric(vertical: 20.0),
+            child: new GridView.builder(
+//              padding: EdgeInsets.all(20.0),
+              itemBuilder: (context, index) => buildItem(index),
+              itemCount: 4,
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+
 //            reverse: true,
+            ),
           ),
+          //TODO:Buttons of Characters Alphabets
+          new Container()
         ],
       ),
     );
   }
 
+  Widget buildCharacter(int index)
+  {
+
+  }
+
   Widget buildItem(int index) {
     debugPrint(currentIdol.pictures[index].toString());
-//    return DecoratedBox(
-//      decoration: BoxDecoration(
-//        image: DecorationImage(
-//          image: AssetImage("images/BTS/Members/Jin/"+(index+1).toString()+".jpg"),
-//          // ...
-//        ),
-//        // ...
-//      ),
-//    );
-    return new Container(
-      child: new Image.asset("images/BTS/Members/Jin/"+(index+1).toString()+".jpg"),
-      height: 75.0,
-      width: 75.0,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        image: DecorationImage(
+          image: AssetImage(
+              "images/BTS/Members/Jin/" + (index + 1).toString() + ".jpg"),
+          fit: BoxFit.fill,
+        ),
+        // ...
+      ),
     );
   }
 
-  void getRandomBand() {
-    setState(() {
-      currentBand = Bands.all[Random.secure().nextInt(Bands.all.length)];
-    });
+  Band getRandomBand() {
+      return currentBand = Bands.all[_random.nextInt(Bands.all.length)];
   }
 }
