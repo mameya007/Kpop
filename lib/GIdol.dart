@@ -30,7 +30,7 @@ class GIdolState extends State<GIdol> {
   void initState() {
     super.initState();
     if (currentBand == null) {
-      currentBand=getRandomBand();
+      currentBand = getRandomBand();
     }
     debugPrint(currentBand.members.length.toString());
     currentIdol =
@@ -84,7 +84,7 @@ class GIdolState extends State<GIdol> {
           new Container(
             margin: EdgeInsets.symmetric(vertical: 20.0),
             child: new GridView.builder(
-//              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.all(5.0),
               itemBuilder: (context, index) => buildItem(index),
               itemCount: 4,
               gridDelegate:
@@ -94,15 +94,127 @@ class GIdolState extends State<GIdol> {
             ),
           ),
           //TODO:Buttons of Characters Alphabets
-          new Container()
+          new Container(
+              alignment: Alignment(0.0, 0.45),
+              child: new DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+                  ),
+                  child: new Text(
+                    "Kim S_____",
+                    textAlign: TextAlign.center,
+                    style: new TextStyle(
+                        letterSpacing: 5.0,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold),
+                  ))),
+
+          new Container(
+            margin: EdgeInsets.fromLTRB(0.0, 425.0, 0.0, 0.0),
+            alignment: Alignment(0.0, 0.8),
+            child: new Table(
+              children: [
+                TableRow(children: [
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                ]),
+                TableRow(children: [
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                  new MaterialButton(
+                      onPressed: () {},
+                      child: new Text(
+                        "A",
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      )),
+                ]),
+              ],
+            ),
+//              child: new GridView.builder(
+//                addRepaintBoundaries: false,
+//                addAutomaticKeepAlives: false,
+//                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                    crossAxisCount: 5),
+//                itemBuilder: (context, index) => buildCharacter(index),
+//                itemCount: 10,
+//              ),
+          ),
         ],
       ),
     );
   }
 
-  Widget buildCharacter(int index)
-  {
-
+  Widget buildCharacter(int index) {
+    return new MaterialButton(
+        minWidth: 20.0,
+        height: 40.0,
+        onPressed: () {
+          debugPrint(index.toString());
+        },
+        child: new Text(
+          "A",
+          style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+        ));
   }
 
   Widget buildItem(int index) {
@@ -116,12 +228,11 @@ class GIdolState extends State<GIdol> {
               "images/BTS/Members/Jin/" + (index + 1).toString() + ".jpg"),
           fit: BoxFit.fill,
         ),
-        // ...
       ),
     );
   }
 
   Band getRandomBand() {
-      return currentBand = Bands.all[_random.nextInt(Bands.all.length)];
+    return currentBand = Bands.all[_random.nextInt(Bands.all.length)];
   }
 }
